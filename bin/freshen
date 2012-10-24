@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+var freshen = require('../lib/index');
+
+freshen.readConfig('.freshenrc', function(err, conf) {
+  var server, watcher;
+  if (err) {
+    throw err;
+  }
+  server = new freshen.Server(conf);
+  watcher = new freshen.Watcher(conf, function(data) {
+    return server.send(JSON.stringify(data));
+  });
+  watcher.start();
+  return server.start();
+});

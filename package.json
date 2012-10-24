@@ -1,0 +1,33 @@
+{
+    "name": "freshen",
+    "description": "Automatically run build scripts and refresh browsers while editing",
+    "keywords": [
+        "refresh",
+        "reload",
+        "update",
+        "browser",
+        "styling",
+        "editor",
+        "editing",
+        "utility"
+    ],
+    "version": "0.0.1",
+    "author": "Anders Thøgersen <anders@bladre.dk>",
+    "licenses": [ "GPL" ],
+    "bin": {
+        "freshen": "./bin/freshen"
+    },
+    "main": "./lib/index.js",
+    "preferGlobal": true,
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/aklt/node-freshen.git"
+    },
+    "engines": {
+        "node": ">= 0.8.0"
+    },
+    "dependencies": {
+        "coffee-script": "= 1.3.3",
+        "socket.io":     "= 0.9.10"
+    }
+}
