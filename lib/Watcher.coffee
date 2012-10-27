@@ -37,10 +37,10 @@ class Watcher
               if @doBuild and @doReport
                 @runBuild @build.command, @runReport.bind @
               else if @doBuild
-                @runBuild @build.command
+                @runBuild @build.command, =>
+                  @batchWaiting = false
               else if @doReport
                 @runReport()
-              @batchWaiting = false
             ,
               @delay
 
@@ -70,6 +70,7 @@ class Watcher
     @onChange changes
     @reportBatch = {}
     @doReport = false
+    @batchWaiting = false
 
 module.exports = Watcher
 
