@@ -26,53 +26,67 @@ do ->
       @ws.on 'msg', (data) =>
         json = JSON.parse data
         if json.change
-          uniqReloaders = {}
+          fileNames = {}
           for fileName in json.change
-            reloaderName = /\.(\w+)$/.exec(fileName)[1]
-            uniqReloaders[reloaderName] = 1
-          for reloaderName of uniqReloaders
-            reloader = reloaders[reloaderName]
-            if reloader
-              reloader new RegExp fileName
+            suffix = /\.(\w+)$/.exec(fileName)[1].toLowerCase()
+            if not fileNames[suffix]
+              fileNames[suffix] = []
+            fileNames[suffix].push fileName
+
+          if fileNames.html and reloaders.html fileNames.html
+            return
+
+          for suffix of fileNames
+            reloaderFun = reloaders[suffix]
+            if reloaderFun
+              reloaderFun fileNames[suffix]
+
         return
 
     reloaders =
-      js: (rxSrc) ->
+      js: (jsFiles) ->
         time = new Date().getTime()
         for elem in $get('script', ['src'])
-          if not rxSrc.test elem.src
+          if not elem.src
             continue
 
-          newElem = doc.createElement 'script'
-          if elem.src.indexOf('?') == -1
-            newElem.src = "#{elem.src}?#{time}"
-          else
-            newElem.src = elem.src.replace /\?\d+$/, '?' + time
+          src = elem.src.replace /\?\d+$/, ''
 
-          remove elem
-          doc.body.appendChild newElem
-          console.log "Loaded #{newElem.src}"
+          for file in jsFiles
+            if rxEscape(file).test src
+              newElem = doc.createElement 'script'
+              newElem.src = "#{elem.src}?#{time}"
+              remove elem
+              doc.body.appendChild newElem
+              console.log "Loaded #{newElem.src}"
         return
 
-      css: (rxCss) ->
+      css: (cssFiles) ->
         time = new Date().getTime()
         for elem in $get('link', ['rel', 'stylesheet'])
-          if not elem.href or not (rxCss or /.*/).test elem.href
+          if not elem.href
             continue
 
-          if elem.href.indexOf('?') == -1
-            elem.href = "#{elem.href}?#{time}"
-          else
-            elem.href = elem.href.replace /\?\d+$/, '?' + time
-          console.log "Loaded #{elem.href}"
+          href = elem.href.replace /\?\d+$/, ''
+
+          for file in cssFiles
+            if rxEscape(file).test href
+              elem.href = "#{href}?#{time}"
+              console.log "Loaded #{elem.href}"
         return
 
-      html: (rxHtml) ->
-        loc = location.href.replace /\?.*/, ''
+      html: (htmlFiles) ->
+        loc = location.href.replace /\?.*$/, ''
         if loc[loc.length - 1] == '/'
-          loc = 'index.html'
-        if rxHtml.test loc
-          location.reload true
-          console.log "Reloaded #{loc}"
+          loc = loc + 'index.html'
+        for file in htmlFiles
+          if rxEscape(file).test loc
+            location.reload true
+            console.log "Reloaded #{loc}"
+            return true
+        return false
+
+    rxEscape = (rx) ->
+      new RegExp "#{rx.replace /([.^$\\\-])/g, '\\$1'}$"
 
   window.$freshen = new ServerCom '<<URL>>'
