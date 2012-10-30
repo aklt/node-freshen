@@ -1,7 +1,7 @@
 
 .SUFFIXES: .css .styl .md .html
 
-all: style.css index.html
+all: style.css index.html en/foo.html
 
 %.css: %.less
 	lessc $< > $@

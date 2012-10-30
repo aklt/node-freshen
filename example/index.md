@@ -1,7 +1,6 @@
-
 # This is an example **page** 
 
 You can try to change the <span class="s1">stylesheet and see</span> the
-changes take effect... **CAKE**
+changes take effect...
 
-<p class="foo">And remember bananas!</p>
+Or click on a link [foo](en/foo.html)
