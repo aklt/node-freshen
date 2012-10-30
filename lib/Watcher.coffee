@@ -1,5 +1,6 @@
-fs = require 'fs'
 child_process = require 'child_process'
+watchDirs     = require './watchDirs'
+
 {loggerConf, log, warn} = require './logger'
 
 # TODO Watch recursively, report creation of dirs, interpret rename event with a
@@ -24,7 +25,7 @@ class Watcher
       if err
         throw err
       log "Watching #{@dir}"
-      fs.watch @dir, (event, fileName) =>
+      watchDirs '.', (event, fileName) =>
         matchReport = (@report[event] or []).some (rx) ->
           rx.test fileName
         matchBuild = (@build.deps or []).some (rx) ->
@@ -34,11 +35,9 @@ class Watcher
           if not @batchWaiting
             @batchWaiting = true
             setTimeout =>
-              if @doBuild and @doReport
+              # Assume a build updates things to report
+              if @doBuild
                 @runBuild @build.command, @runReport.bind @
-              else if @doBuild
-                @runBuild @build.command, =>
-                  @batchWaiting = false
               else if @doReport
                 @runReport()
             ,
@@ -49,7 +48,8 @@ class Watcher
 
           if matchReport
             @doReport = true
-            @reportBatch["#{event}-#{fileName}"] = [event, fileName]
+            @reportBatch["#{event}-#{fileName}"] = [event, \
+                                  fileName.replace /^\.\//, '']
 
   runBuild: (command, next) ->
     [prog, args...] = command.split /\s+/
