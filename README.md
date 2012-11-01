@@ -2,11 +2,12 @@
 
 This program monitors files for changes, runs build scripts and tells browsers
 to reload files when changes are made.  This makes it possible to create a whole
-site from your editor without having to reload the browser!
+site from your editor without having to reload the browser.
 
-The directory being monitored should contain a `.freshenrc` file that configures
-when build scripts should be run or when the browser should reload files. The
-file is created if it does not exist.
+This is done by
+[fs.watch](http://nodejs.org/api/fs.html#fs_fs_watch_filename_options_listener)ing
+files and reporting changes to the browser through a [socket.io](https://github.com/learnboost/socket.io)
+connection.
 
 ## Installation
 
@@ -25,6 +26,10 @@ Point your browser at `http://localhost:5005` and start editing the files that
 make up the site.  You will probably also want to change the `.freshenrc` file.
 
 ## Configuration
+
+The directory being monitored should contain a `.freshenrc` file that configures
+when build scripts should be run or when the browser should reload files. It is
+created from the default configuration if it does not exist.
 
 The default configuration file looks like this:
 
