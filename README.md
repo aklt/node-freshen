@@ -46,13 +46,19 @@ The default configuration file looks like this:
     # Should terminal logging be in color?
     color: true
 
+    # All directories below the directory that freshen is started in will be
+    # watched. Use this option to set a regular expression matching directories that
+    # should not be watched.  Note that the root dir will always be included.
+    # exclude: /__foo/
+
     # Files to reload in the browser when they change. The value of `change` should
     # be either a string of suffix names separated by whitespace or an array of
     # regular expressions.
     report:
       change: 'css html js'
 
-    # Run a command each time a file with one of the suffixes in deps change.
+    # Run command each time a file matching one of the suffixes or regular
+    # expressions in deps changes.
     # The value of `deps` can be a string of suffix names or an Array of RegExps
     build:
       command: 'make'

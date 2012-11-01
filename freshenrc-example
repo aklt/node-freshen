@@ -21,7 +21,8 @@ color: true
 report:
   change: 'css html js'
 
-# Run a command each time a file with one of the suffixes in deps change.
+# Run command each time a file matching one of the suffixes or regular
+# expressions in deps changes.
 # The value of `deps` can be a string of suffix names or an Array of RegExps
 build:
   command: 'make'
