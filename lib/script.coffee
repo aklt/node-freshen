@@ -46,16 +46,13 @@ do ->
     reloaders =
       js: (jsFiles) ->
         time = new Date().getTime()
+        jsFilesRx = makeFileMatchRegexes jsFiles
         for elem in $get('script', ['src'])
-          if not elem.src
-            continue
-
           src = elem.src.replace /\?\d+$/, ''
-
-          for file in jsFiles
-            if rxEscape(file).test src
+          for rx in jsFilesRx
+            if rx.test src
               newElem = doc.createElement 'script'
-              newElem.src = "#{elem.src}?#{time}"
+              newElem.src = "#{src}?#{time}"
               remove elem
               doc.body.appendChild newElem
               console.log "Loaded #{newElem.src}"
@@ -63,30 +60,33 @@ do ->
 
       css: (cssFiles) ->
         time = new Date().getTime()
+        cssFilesRx = makeFileMatchRegexes cssFiles
         for elem in $get('link', ['rel', 'stylesheet'])
           if not elem.href
             continue
 
           href = elem.href.replace /\?\d+$/, ''
 
-          for file in cssFiles
-            if rxEscape(file).test href
+          for rx in cssFilesRx
+            if rx.test href
               elem.href = "#{href}?#{time}"
               console.log "Loaded #{elem.href}"
         return
 
       html: (htmlFiles) ->
+        htmlFilesRx = makeFileMatchRegexes htmlFiles
         loc = location.href.replace /\?.*$/, ''
         if loc[loc.length - 1] == '/'
           loc = loc + 'index.html'
-        for file in htmlFiles
-          if rxEscape(file).test loc
+        for rx in htmlFilesRx
+          if rx.test loc
             location.reload true
             console.log "Reloaded #{loc}"
             return true
         return false
 
-    rxEscape = (rx) ->
-      new RegExp "#{rx.replace /([.^$\\\-])/g, '\\$1'}$"
+    makeFileMatchRegexes = (stringArray) ->
+      for str in stringArray
+        new RegExp "#{str.replace /([.^$\\\-])/g, '\\$1'}$"
 
   window.$freshen = new ServerCom '<<URL>>'
