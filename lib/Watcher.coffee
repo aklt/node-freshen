@@ -11,7 +11,7 @@ class Watcher
     @delay        = conf.delay   # At most one batch is sent per delay
     @dir          = conf.root or '.' #
     @report       = conf.report      # {change: [/\.js$/, /\.css/]}
-    @build        = conf.build       # 
+    @build        = conf.build       #
     @onChange     = onChange or warn # Call this function when a change happens
     @batchWaiting = false
     @doBuild      = false
@@ -20,12 +20,12 @@ class Watcher
 
     loggerConf conf
 
-  start: ->
+  start: (next) ->
     @runBuild @build.command, (err) =>
       if err
         throw err
       log "Watching #{@dir}"
-      watchDirs '.', (event, fileName) =>
+      onEvent = (event, fileName) =>
         matchReport = (@report[event] or []).some (rx) ->
           rx.test fileName
         matchBuild = (@build.deps or []).some (rx) ->
@@ -50,6 +50,8 @@ class Watcher
             @doReport = true
             @reportBatch["#{event}-#{fileName}"] = [event, \
                                   fileName.replace /^\.\//, '']
+
+      watchDirs '.', onEvent, next
 
   runBuild: (command, next) ->
     [prog, args...] = command.split /\s+/

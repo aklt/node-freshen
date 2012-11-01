@@ -2,6 +2,12 @@
 
 var freshen = require('../lib/index');
 
+function next(err) {
+  if (err) {
+    throw err;
+  }
+}
+
 freshen.readConfig('.freshenrc', function(err, conf) {
   var server, watcher;
   if (err) {
@@ -11,6 +17,6 @@ freshen.readConfig('.freshenrc', function(err, conf) {
   watcher = new freshen.Watcher(conf, function(data) {
     return server.send(JSON.stringify(data));
   });
-  watcher.start();
-  return server.start();
+  watcher.start(next);
+  server.start(next);
 });

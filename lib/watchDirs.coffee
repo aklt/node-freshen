@@ -37,7 +37,7 @@ findDirs = (root, next) ->
       return
   dirRecurse pending.shift()
 
-watchDirs = (rootDir, onchange) ->
+watchDirs = (rootDir, onchange, next) ->
     findDirs rootDir, (err, dirs) ->
       if err
         return next err
@@ -53,6 +53,6 @@ watchDirs = (rootDir, onchange) ->
               throw "Seems like fs.watch on your platform does not return a" + \
                     " filename, so this script will not work :-("
             onchange event, "#{dir}/#{filename}"
-      return
+      next 0
 
 module.exports = watchDirs
