@@ -37,12 +37,14 @@ findDirs = (root, next) ->
       return
   dirRecurse pending.shift()
 
-watchDirs = (rootDir, onchange, next) ->
+watchDirs = (rootDir, excludeFilter, onchange, next) ->
     findDirs rootDir, (err, dirs) ->
       if err
         return next err
 
-      prefixLen = rootDir.length
+      dirs = dirs.filter (dir) ->
+        ! excludeFilter.test dir
+
       dirs.push rootDir
 
       for dir in dirs

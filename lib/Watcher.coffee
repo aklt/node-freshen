@@ -51,7 +51,7 @@ class Watcher
             @reportBatch["#{event}-#{fileName}"] = [event, \
                                   fileName.replace /^\.\//, '']
 
-      watchDirs '.', onEvent, next
+      watchDirs '.', conf.exclude or /\/\/\//, onEvent, next
 
   runBuild: (command, next) ->
     [prog, args...] = command.split /\s+/
