@@ -31,8 +31,8 @@ class Server
 
     @httpServer = http.createServer (req, res, next) =>
       fileName = req.url.replace /\?.*/, ''
-      if fileName == '/'
-        fileName = '/index.html'
+      if fileName[fileName.length - 1] == '/'
+        fileName += 'index.html'
       log "#{req.method} #{fileName}"
 
       filePath = "#{@conf.root}/#{fileName.slice 1}"
