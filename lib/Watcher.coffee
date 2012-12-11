@@ -7,18 +7,18 @@ watchDirs     = require './watchDirs'
 # stat
 
 class Watcher
-  constructor: (conf, onChange) ->
-    @delay        = conf.delay   # At most one batch is sent per delay
-    @dir          = conf.root or '.' #
-    @report       = conf.report      # {change: [/\.js$/, /\.css/]}
-    @build        = conf.build       #
+  constructor: (@conf, onChange) ->
+    @delay        = @conf.delay   # At most one batch is sent per delay
+    @dir          = @conf.root or '.' #
+    @report       = @conf.report      # {change: [/\.js$/, /\.css/]}
+    @build        = @conf.build       #
     @onChange     = onChange or warn # Call this function when a change happens
     @batchWaiting = false
     @doBuild      = false
     @doReport     = false
     @reportBatch  = {}
 
-    loggerConf conf
+    loggerConf @conf
 
   start: (next) ->
     @runBuild @build.command, (err) =>
@@ -51,7 +51,7 @@ class Watcher
             @reportBatch["#{event}-#{fileName}"] = [event, \
                                   fileName.replace /^\.\//, '']
 
-      watchDirs '.', conf.exclude or /\/\/\//, onEvent, next
+      watchDirs '.', @conf.exclude or /\/\/\//, onEvent, next
 
   runBuild: (command, next) ->
     [prog, args...] = command.split /\s+/
