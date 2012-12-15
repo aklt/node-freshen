@@ -23,7 +23,7 @@ class Watcher
   start: (next) ->
     @runBuild @build.command, (err) =>
       if err
-        throw err
+        return next err
       log "Watching #{@dir}"
       onEvent = (event, fileName) =>
         matchReport = (@report[event] or []).some (rx) ->
@@ -37,7 +37,7 @@ class Watcher
             setTimeout =>
               # Assume a build updates things to report
               if @doBuild
-                @runBuild @build.command, @runReport.bind @
+                @runBuild @build.command, @runReport
               else if @doReport
                 @runReport()
             ,
@@ -53,11 +53,11 @@ class Watcher
 
       watchDirs '.', @conf.exclude or /\/\/\//, onEvent, next
 
-  runBuild: (command, next) ->
+  runBuild: (command, next) =>
     [prog, args...] = command.split /\s+/
     child_process.exec prog, args, (err, stdout, stderr) =>
       if err
-        return warn "#{err}"
+        return next warn "#{err}"
       log stdout, prefix: 'Build: '
       (next or ->)()
       @doBuild = false
