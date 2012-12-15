@@ -62,15 +62,18 @@ class Watcher
       (next or ->)()
       @doBuild = false
 
-  runReport: ->
+  runReport: =>
     changes = {}
+    changeCount = 0
     for key of @reportBatch
+      changeCount += 1
       [event, fileName] = @reportBatch[key]
       if not changes.hasOwnProperty event
         changes[event] = []
       changes[event].push fileName
-    @onChange changes
-    @reportBatch = {}
+    if changeCount > 0
+      @onChange changes
+      @reportBatch = {}
     @doReport = false
     @batchWaiting = false
 
