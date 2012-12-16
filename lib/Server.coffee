@@ -6,7 +6,7 @@ assert          = require 'assert'
 coffee          = require 'coffee-script'
 socketIo        = require 'socket.io'
 
-{loggerConf, info, log, warn} = require './logger'
+{loggerConf, info, note, log, warn} = require './logger'
 
 class Server
   constructor: (@conf) ->
@@ -62,7 +62,7 @@ class Server
     @httpServer.listen @port, @hostname, 511, (err) =>
       if err
         return next err
-      log "Listening to #{@url}"
+      note "Listening to #{@url}"
       (next or ->) 0
 
   stop: (next) ->
@@ -77,7 +77,7 @@ class Server
   makeCoffeeInjector = (filesToInject, wsUrl) ->
     js = ''
     for fileToInject in filesToInject
-      warn "Reading #{fileToInject}"
+      # info "Reading #{fileToInject}"
       cs = fs.readFileSync(fileToInject).toString().replace '<<URL>>', wsUrl
       if /\.coffee$/.test fileToInject
         cs = coffee.compile cs, bare: true
