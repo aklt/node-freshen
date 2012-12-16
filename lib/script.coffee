@@ -43,6 +43,17 @@ do ->
 
         return
 
+    imgReloader = (imgFiles) ->
+      time = new Date().getTime()
+      imgFilesRx = makeFileMatchRegexes imgFiles
+      for elem in $get 'img', ['src']
+        src = elem.src.replace /\?\d+$/, ''
+        for rx in imgFilesRx
+          if rx.test src
+            elem.src = "#{src}?#{time}"
+            console.log "Loaded #{src}"
+      return
+
     reloaders =
       js: (jsFiles) ->
         time = new Date().getTime()
@@ -85,9 +96,14 @@ do ->
             return true
         return false
 
+      png: imgReloader
+      jpg: imgReloader
+      jpeg: imgReloader
+      gif:  imgReloader
+
     makeFileMatchRegexes = (stringArray) ->
       for str in stringArray
-        new RegExp "#{str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, \
-                                                                "\\$&")}$"
+        new RegExp "#{str.replace(/([\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|])/g, \
+                                                                '\\$1')}$"
 
   window.$freshen = new ServerCom '<<URL>>'
