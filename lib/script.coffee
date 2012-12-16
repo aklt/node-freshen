@@ -87,6 +87,7 @@ do ->
 
     makeFileMatchRegexes = (stringArray) ->
       for str in stringArray
-        new RegExp "#{str.replace /([.^$\\\-])/g, '\\$1'}$"
+        new RegExp "#{str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, \
+                                                                "\\$&")}$"
 
   window.$freshen = new ServerCom '<<URL>>'
