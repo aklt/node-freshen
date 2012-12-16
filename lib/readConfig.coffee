@@ -37,7 +37,7 @@ srArrayToRegexArray = (srArray) ->
   result = []
   for expr in wsStringToArray srArray
     if typeof expr == 'string'
-      result.push new RegExp "\\.#{expr}$", "i"
+      result.push new RegExp "#{expr}$", "i"
     else
       result.push expr
   return result
@@ -82,6 +82,8 @@ module.exports = readConfig = (configFileName, next) ->
           configObj.inject = true
         for event of configObj.report
           configObj.report[event] = srArrayToRegexArray configObj.report[event]
+        configObj.report.change.push new RegExp "#{configFileName.replace \
+                                                   /^\./g, '\\.'}$"
         configObj.build.deps = srArrayToRegexArray configObj.build.deps
         fs.realpath path.normalize(configObj.root), {}, (err, realPath) ->
           configObj.root = realPath
