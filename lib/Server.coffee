@@ -65,6 +65,11 @@ class Server
       log "Listening to #{@url}"
       (next or ->) 0
 
+  stop: (next) ->
+    @httpServer.close =>
+      @httpServer = null
+
+
   send: (data) ->
     info "Sending #{data} to client(s)"
     @wsServer.sockets.emit 'msg', data

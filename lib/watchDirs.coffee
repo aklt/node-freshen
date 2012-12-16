@@ -46,15 +46,16 @@ watchDirs = (rootDir, excludeFilter, onchange, next) ->
         ! excludeFilter.test dir
 
       dirs.push rootDir
+      watchers = []
 
       for dir in dirs
-        fs.watch dir, do (dir) ->
+        watchers.push fs.watch dir, do (dir) ->
           return (event, filename) ->
             # log "Watch Event, #{event} #{filename}"
             if not dir
               throw "Seems like fs.watch on your platform does not return a" + \
                     " filename, so this script will not work :-("
             onchange event, "#{dir}/#{filename}"
-      next 0
+      next 0, watchers
 
 module.exports = watchDirs

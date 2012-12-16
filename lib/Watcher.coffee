@@ -25,16 +25,18 @@ class Watcher
       if err
         return next err
       log "Watching #{@dir}"
-      onEvent = (event, fileName) =>
+      onEvent = (event, relativeFile) =>
+        relativeFile = relativeFile.replace /^\.\//, ''
         matchReport = (@report[event] or []).some (rx) ->
-          rx.test fileName
+          rx.test relativeFile
         matchBuild = (@build.deps or []).some (rx) ->
-          rx.test fileName
+          rx.test relativeFile
 
         if matchReport or matchBuild
           if not @batchWaiting
             @batchWaiting = true
-            setTimeout =>
+            @timeoutId = setTimeout =>
+              @timeoutId = null
               # Assume a build updates things to report
               if @doBuild
                 @runBuild @build.command, @runReport
@@ -48,10 +50,19 @@ class Watcher
 
           if matchReport
             @doReport = true
-            @reportBatch["#{event}-#{fileName}"] = [event, \
-                                  fileName.replace /^\.\//, '']
+            @reportBatch["#{event}-#{relativeFile}"] = [event, relativeFile]
 
-      watchDirs '.', @conf.exclude or /\/\/\//, onEvent, next
+      watchDirs '.', @conf.exclude or /\/\/\//, onEvent, (err, watchers) =>
+        @watchers = watchers
+        next err
+
+  stop: (next) =>
+    if @timeoutId
+      clearTimeout @timeoutId
+      @timeoutId = null
+    for watcher in @watchers
+      watcher.close()
+    @watchers = null
 
   runBuild: (command, next) =>
     [prog, args...] = command.split /\s+/
@@ -67,10 +78,10 @@ class Watcher
     changeCount = 0
     for key of @reportBatch
       changeCount += 1
-      [event, fileName] = @reportBatch[key]
+      [event, relativeFile] = @reportBatch[key]
       if not changes.hasOwnProperty event
         changes[event] = []
-      changes[event].push fileName
+      changes[event].push relativeFile
     if changeCount > 0
       @onChange changes
       @reportBatch = {}
