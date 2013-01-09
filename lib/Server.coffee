@@ -18,7 +18,8 @@ class Server
     {@url, @mime}      = @conf
     {@hostname, @port} = url.parse @url
 
-    @port or= 80
+    @port or= '80'
+    @port = parseInt @port, 10
 
     if @conf.inject
       @injector = makeCoffeeInjector \
@@ -59,11 +60,34 @@ class Server
       log "Connection accepted"
 
   start: (next) ->
-    @httpServer.listen @port, @hostname, 511, (err) =>
-      if err
-        return next err
-      note "Listening to #{@url}"
+    maxTries = 20
+    listen = =>
+      @httpServer.listen @port, @hostname, (err) =>
+        if err
+          return next err
+
+    @httpServer.on 'listening', =>
+      msgListen = "Listening to #{@url}"
+      if maxTries < 20
+        urlObj = url.parse @url
+        url2 = "#{urlObj.protocol}//#{urlObj.hostname}:#{@port}"
+        msgListen = "Listening to #{url2} (changed from #{@url})"
+      note msgListen
       (next or ->) 0
+
+    @httpServer.removeAllListeners 'error'
+    @httpServer.on 'error', (err) =>
+      error = err.toString()
+      if error
+        if /EADDRINUSE/.test error
+          warn error
+          @port += 1
+          maxTries -= 1
+          if maxTries > 0
+            return listen()
+        return next error
+
+    listen()
 
   stop: (next) ->
     @httpServer.close =>
