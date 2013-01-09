@@ -100,6 +100,7 @@ do ->
       jpg: imgReloader
       jpeg: imgReloader
       gif:  imgReloader
+      svg:  imgReloader
 
     makeFileMatchRegexes = (stringArray) ->
       for str in stringArray
