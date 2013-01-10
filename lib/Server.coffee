@@ -21,12 +21,6 @@ class Server
     @port or= '80'
     @port = parseInt @port, 10
 
-    if @conf.inject
-      @injector = makeCoffeeInjector \
-      (["../node_modules/socket.io/node_modules/socket.io-client/dist/" + \
-        "socket.io.min.js", "script.coffee"] \
-          .map (js) -> path.normalize("#{__dirname}/#{js}")), @url
-
     headers =
       'Cache-Control': 'private, max-age=0, must-revalidate'
 
@@ -72,6 +66,13 @@ class Server
         urlObj = url.parse @url
         url2 = "#{urlObj.protocol}//#{urlObj.hostname}:#{@port}"
         msgListen = "Listening to #{url2} (changed from #{@url})"
+        @url = url2
+
+        if @conf.inject
+          @injector = @makeCoffeeInjector \
+          (["../node_modules/socket.io/node_modules/socket.io-client/dist/" + \
+            "socket.io.min.js", "script.coffee"] \
+              .map (js) -> path.normalize("#{__dirname}/#{js}"))
       note msgListen
       (next or ->) 0
 
@@ -98,11 +99,11 @@ class Server
     info "Sending #{data} to client(s)"
     @wsServer.sockets.emit 'msg', data
 
-  makeCoffeeInjector = (filesToInject, wsUrl) ->
+  makeCoffeeInjector: (filesToInject) ->
     js = ''
     for fileToInject in filesToInject
       # info "Reading #{fileToInject}"
-      cs = fs.readFileSync(fileToInject).toString().replace '<<URL>>', wsUrl
+      cs = fs.readFileSync(fileToInject).toString().replace '<<URL>>', @url
       if /\.coffee$/.test fileToInject
         cs = coffee.compile cs, bare: true
       js += """<script>\n#{cs}\n</script>\n"""
