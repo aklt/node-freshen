@@ -1,3 +1,4 @@
+pkg = require '../package'
 
 next = (err) ->
   if err
@@ -12,6 +13,7 @@ start = (freshen, configFileName) ->
         watcher.stop()
         return start freshen, configFileName
       server.send JSON.stringify data
+    freshen.logger.info "Running #{pkg.name} version #{pkg.version}"
     watcher.start next
     server.start next
 
