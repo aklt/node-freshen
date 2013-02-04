@@ -17,9 +17,12 @@ running the following commands:
 ```bash
     $ npm install -g freshen
     $ cd location/of/my/static/site
-    $ freshen
-    [2012-10-24T22:34:05] Creating .freshenrc from /some/path/node-freshen/freshenrc-example
-    [2012-10-24T22:34:05] Listening to http://localhost:5005
+    $ freshen 
+    22:15:56 Creating .freshenrc from /home/alt/projects/node-freshen/freshenrc-example
+    22:15:56 Running freshen version 0.1.0
+    22:15:56 Listening to http://localhost:5005
+    22:15:56 make: Nothing to be done for 'all'.
+    22:15:56 Watching /home/alt/projects/node-freshen/example
 ```
 
 Point your browser at `http://localhost:5005` and start editing the files that
