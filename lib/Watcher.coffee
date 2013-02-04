@@ -1,7 +1,7 @@
 child_process = require 'child_process'
 watchDirs     = require './watchDirs'
 
-{loggerConf, note, log, warn, error} = require './logger'
+{note, log, warn, error} = require './logger'
 
 # TODO Watch recursively, report creation of dirs, interpret rename event with a
 # stat
@@ -17,8 +17,6 @@ class Watcher
     @doBuild      = false
     @doReport     = false
     @reportBatch  = {}
-
-    loggerConf @conf
 
   start: (next) ->
     @runBuild @build.command, (err) =>

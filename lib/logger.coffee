@@ -19,7 +19,7 @@ msgFun = (msg, conf) ->
                .replace(/^/gm, stamp)}"
 
 module.exports =
-  loggerConf: (conf) ->
+  configure: (conf) ->
     if conf.color
       colorInfo  = esc + '[0;33m'
       colorNote  = esc + '[0;32m'

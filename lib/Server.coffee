@@ -6,14 +6,12 @@ assert          = require 'assert'
 coffee          = require 'coffee-script'
 socketIo        = require 'socket.io'
 
-{loggerConf, info, note, log, warn} = require './logger'
+{info, note, log, warn} = require './logger'
 
 class Server
   constructor: (@conf) ->
     assert @conf.url,  "Need conf.url"
     assert @conf.mime, "Need mime types"
-
-    loggerConf @conf
 
     {@url, @mime}      = @conf
     {@hostname, @port} = url.parse @url

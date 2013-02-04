@@ -6,6 +6,8 @@ next = (err) ->
 
 start = (freshen, configFileName) ->
   freshen.readConfig configFileName, (err, conf) ->
+    freshen.logger.configure conf
+    freshen.logger.info "Running #{pkg.name} version #{pkg.version}"
     server  = new freshen.Server conf
     watcher = new freshen.Watcher conf, (data) ->
       if configFileName in data.change
@@ -13,7 +15,6 @@ start = (freshen, configFileName) ->
         watcher.stop()
         return start freshen, configFileName
       server.send JSON.stringify data
-    freshen.logger.info "Running #{pkg.name} version #{pkg.version}"
     watcher.start next
     server.start next
 
