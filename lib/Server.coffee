@@ -68,11 +68,11 @@ class Server
         msgListen = "Listening to #{url2} (changed from #{@url})"
         @url = url2
 
-        if @conf.inject
-          @injector = @makeCoffeeInjector \
-          (["../node_modules/socket.io/node_modules/socket.io-client/dist/" + \
-            "socket.io.min.js", "script.coffee"] \
-              .map (js) -> path.normalize("#{__dirname}/#{js}"))
+      if @conf.inject
+        @injector = @makeCoffeeInjector \
+        (["../node_modules/socket.io/node_modules/socket.io-client/dist/" + \
+          "socket.io.min.js", "script.coffee"] \
+            .map (js) -> path.normalize("#{__dirname}/#{js}"))
       note msgListen
       (next or ->) 0
 
