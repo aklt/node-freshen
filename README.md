@@ -34,6 +34,9 @@ The directory being monitored should contain a `.freshenrc` file that configures
 when build scripts should be run or when the browser should reload files. It is
 created from the default configuration if it does not exist.
 
+If the file `${HOME}/.freshenrc` is present it is used as a template instead of
+the default configuration that comes with freshen.
+
 The default configuration file looks like this:
 
 ```coffee

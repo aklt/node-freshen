@@ -8,6 +8,7 @@ coffee = require 'coffee-script'
 projectRoot = path.normalize "#{__dirname}/../"
 defaultMime = projectRoot + 'mime.types'
 defaultConf = projectRoot + 'freshenrc-example'
+userConf    = process.env.HOME + '/.freshenrc'
 
 readMimeTypes = (mimeTypesFileName, next) ->
   fs.readFile mimeTypesFileName, (err, data) ->
@@ -47,14 +48,18 @@ module.exports = readConfig = (configFileName, next) ->
   ensureConfigFilePresence = (next) ->
     fs.exists configFileName, (exists) ->
       if not exists
-        log "Creating #{configFileName} from #{defaultConf}"
-        return fs.readFile defaultConf, (err, data) ->
-          if err
-            return next err
-          fs.writeFile configFileName, data, (err) ->
+        conf = userConf
+        return fs.exists conf, (exists) ->
+          if not exists
+            conf = defaultConf
+          log "Creating #{configFileName} from #{conf}"
+          fs.readFile conf, (err, data) ->
             if err
               return next err
-            next 0
+            fs.writeFile configFileName, data, (err) ->
+              if err
+                return next err
+              next 0
       next 0
 
   ensureConfigFilePresence (err) ->
