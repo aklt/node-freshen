@@ -50,11 +50,11 @@ watchDirs = (rootDir, excludeFilter, onchange, next) ->
 
       for dir in dirs
         watchers.push fs.watch dir, do (dir) ->
+          if not dir
+            throw "Seems like fs.watch on your platform does not return a" + \
+                  " filename, so this script will not work :-("
           return (event, filename) ->
             # log "Watch Event, #{event} #{filename}"
-            if not dir
-              throw "Seems like fs.watch on your platform does not return a" + \
-                    " filename, so this script will not work :-("
             onchange event, "#{dir}/#{filename}"
       next 0, watchers
 
