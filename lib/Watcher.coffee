@@ -12,7 +12,7 @@ class Watcher
     @dir          = @conf.root or '.' #
     @report       = @conf.report      # {change: [/\.js$/, /\.css/]}
     @build        = @conf.build       #
-    @onChange     = onChange or warn # Call this function when a change happens
+    @onChange     = onChange or console.warn # Call this when a change happens
     @batchWaiting = false
     @doBuild      = false
     @doReport     = false
@@ -50,7 +50,7 @@ class Watcher
             @doReport = true
             @reportBatch["#{event}-#{relativeFile}"] = [event, relativeFile]
 
-      watchDirs '.', @conf.exclude or /\/\/\//, onEvent, (err, watchers) =>
+      watchDirs @dir, @conf.exclude or /\/\/\//, onEvent, (err, watchers) =>
         @watchers = watchers
         next err
 
