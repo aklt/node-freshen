@@ -52,7 +52,7 @@ class Watcher
 
       watchDirs @dir, @conf.exclude or /\/\/\//, onEvent, (err, watchers) =>
         @watchers = watchers
-        next err
+        (next or ->) err
 
   stop: (next) =>
     if @timeoutId
