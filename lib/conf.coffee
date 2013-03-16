@@ -25,10 +25,6 @@ readMimeTypes = (mimeTypesFileName, next) ->
         result[suffix] = type
     next 0, result
 
-parseCSON = (str) ->
-  return (new Function coffee.compile "return {\n#{str.replace /^/gm, '  '}}" \
-  , bare: 1)()
-
 wsStringToArray = (wsString) ->
   if typeof wsString == 'string'
     return wsString.split /\s+/
@@ -43,7 +39,17 @@ srArrayToRegexArray = (srArray) ->
       result.push expr
   return result
 
-module.exports = readConfig = (configFileName, next) ->
+parseCSON = (str) ->
+  return (new Function coffee.compile "return {\n#{str.replace /^/gm, '  '}}" \
+  , bare: 1)()
+
+readCSON = (filename, next) ->
+  fs.readFile filename, (err, configData) ->
+    if err
+      return next err
+    next 0, (parseCSON configData.toString()) or {}
+
+readConfig = (configFileName, next) ->
 
   ensureConfigFilePresence = (next) ->
     fs.exists configFileName, (exists) ->
@@ -66,10 +72,9 @@ module.exports = readConfig = (configFileName, next) ->
     if err
       return next err
 
-    fs.readFile configFileName, (err, configData) ->
+    readCSON configFileName, (err, configObj) ->
       if err
         return next err
-      configObj = (parseCSON configData.toString()) || {}
 
       assert configObj.report and configObj.report.change, \
         "Config: Need report.change in config file"
@@ -82,11 +87,18 @@ module.exports = readConfig = (configFileName, next) ->
           return next err
         configObj.mime = mime
         if not configObj.root
-          configObj.root = './'
+          m = /^(.*?)\/[^\/]+$/.exec configFileName
+          if m
+            configObj.root = m[1]
+          else
+            configObj.root = './'
+
         if not configObj.hasOwnProperty 'inject'
           configObj.inject = true
+
         for event of configObj.report
           configObj.report[event] = srArrayToRegexArray configObj.report[event]
+
         configObj.report.change.push new RegExp "#{configFileName.replace \
                                                    /^\./g, '\\.'}$"
         configObj.build.deps = srArrayToRegexArray configObj.build.deps
@@ -95,3 +107,25 @@ module.exports = readConfig = (configFileName, next) ->
           if err
             return next err
           next 0, configObj
+
+readDaemonConfig = (daemonConfigFile, next) ->
+  readCSON daemonConfigFile, (err, confObj) ->
+    if err
+      return next err
+    assert confObj.dirs and confObj.dirs.length > 0, \
+      "Expected a list of dirs in the .freshend file"
+    count = confObj.dirs.length
+    noFreshenRc = []
+    for dir in confObj.dirs
+      do (dir) ->
+        filename = "#{dir}/.freshenrc"
+        fs.exists filename, (exists) ->
+          if not exists
+            noFreshenRc.push dir
+          count -= 1
+          if count == 0
+            if noFreshenRc.length > 0
+              return next "No .freshenrc file in:\n  #{noFreshenRc.join '\n  '}\n"
+            next 0, confObj
+
+module.exports = {readConfig, readDaemonConfig}
