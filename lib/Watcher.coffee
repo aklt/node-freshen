@@ -8,10 +8,10 @@ watchDirs     = require './watchDirs'
 
 class Watcher
   constructor: (@conf, onChange) ->
-    @delay        = @conf.delay   # At most one batch is sent per delay
-    @dir          = @conf.root or '.' #
-    @report       = @conf.report      # {change: [/\.js$/, /\.css/]}
-    @build        = @conf.build       #
+    @delay        = @conf.delay        # At most one batch is sent per delay
+    @dir          = @conf.root or '.'  #
+    @report       = @conf.report or {} # {change: [/\.js$/, /\.css/]}
+    @build        = @conf.build
     @onChange     = onChange or console.warn # Call this when a change happens
     @batchWaiting = false
     @doBuild      = false

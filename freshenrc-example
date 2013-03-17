@@ -18,6 +18,7 @@ color: true
 # Files to reload in the browser when they change. The value of `change` should
 # be either a string of suffix names separated by whitespace or an array of
 # regular expressions.
+# If report is not present, the browser will not reload files.
 report:
   change: 'css html js'
 

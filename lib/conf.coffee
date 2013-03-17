@@ -76,8 +76,6 @@ readConfig = (configFileName, next) ->
       if err
         return next err
 
-      assert configObj.report and configObj.report.change, \
-        "Config: Need report.change in config file"
       assert configObj.build and configObj.build.command and \
         configObj.build.deps, "Config: Need build.command and build.deps"
       assert configObj.url, "Config: Need url field in config file"
