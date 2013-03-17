@@ -8,3 +8,6 @@ dirs: [
   # 'vim-substitute'
 ].map (dirname) ->
    return "#{process.env.HOME}/projects/#{dirname}"
+
+# Where to access the freshend server
+url: 'http://localhost:5000'
