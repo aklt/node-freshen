@@ -86,38 +86,37 @@ startDaemon = (freshen, daemonConfigFile) ->
           httpServer.listen 5000, 'localhost'
 
 start = (freshen) ->
-  runAsDaemon = false
+  startDaemon = false
   showHelp = false
   for arg in process.argv.slice(2)
     if /^-h|--help/.test arg
       showHelp = true
       break
-    if /^-d|--daemon/.test arg
-      runAsDaemon = true
+    if /^start/.test arg
+      startDaemon = true
       break
 
   if showHelp
     require('util').puts """
-    Usage: freshen [option] | [path/to/.freshenrc] | [command]
+    Usage: freshen [-h|--help] | [command] | [path/to/.freshenrc]
 
       -h | --help   Shows this help
 
-      -d | --daemon Reads $HOME/.freshend and starts an instance
-                    of freshen for each dir in this file
-
     Commands:
 
-      stop, start, restart  Start/Stop/Restart freshend
+      start    Start a freshen instance for each of the directories
+               mentioned in $HOME/.freshend
 
     If no arguments are given the file .freshenrc in the current directory
     will read or created if it does not exist.
-
     """
     return 0
 
-  if runAsDaemon
+  if startDaemon
     startDaemon freshen, process.env.HOME + '/.freshend'
   else
     startWorker freshen, process.argv[2] or '.freshenrc'
+
+
 
 module.exports = start
