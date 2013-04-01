@@ -5,7 +5,35 @@ next = (err) ->
   if err
     throw err
 
+# {{{1 Maintain state
+state =
+  sigintCount: 0
+  pauseBuilds: false
+
+addSigIntHandler = (obj, done) ->
+  obj.on 'SIGINT', ->
+    state.sigintCount or= 0
+    if state.sigintCount > 1
+      done 0
+    else
+      console.warn 'Press CTRL-C a couple of times to close'
+    timeoutFun = ->
+      state.sigintToken = null
+      delete state.sigintCount
+    state.sigintCount += 1
+    if not state.sigintToken
+      state.sigintToken = setTimeout timeoutFun, 500
+
+addOptionsHandler = (obj, done) ->
+  obj.on 'options', (options) ->
+    obj.options
+
+# 1}}}
+
 startWorker = (freshen, configFileName) ->
+  addSigIntHandler process, ->
+    console.warn "CTRL-C: exit"
+    process.exit 0
   freshen.conf.readConfig configFileName, (err, conf) ->
     freshen.logger.configure conf
     freshen.logger.info "Running #{pkg.name} version #{pkg.version}"
