@@ -26,7 +26,7 @@ addSigIntHandler = (obj, done) ->
 
 addOptionsHandler = (obj, done) ->
   obj.on 'options', (options) ->
-    obj.options
+    # obj.options
 
 # 1}}}
 

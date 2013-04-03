@@ -34,3 +34,8 @@ url: 'http://localhost:5005'
 
 ## Supply a custom mimetypes file
 # mimeTypesFile: "mime.types"
+
+# Glob string with directory configurations for servers to start up
+projects: [
+  "#{process.env.HOME}/projects/*/.freshenrc"
+]

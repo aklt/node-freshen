@@ -4,7 +4,7 @@
 # freshen accordingly.  If no .freshenrc file is present throw an error.
 dirs: [
   'node-freshen/example'
-  'commas'
+  'node-macroffee'
   # 'vim-substitute'
 ].map (dirname) ->
    return "#{process.env.HOME}/projects/#{dirname}"

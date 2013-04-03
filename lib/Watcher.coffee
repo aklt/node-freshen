@@ -16,9 +16,11 @@ class Watcher
     @batchWaiting = false
     @doBuild      = false
     @doReport     = false
+    @buildPaused       = true
     @reportBatch  = {}
 
   start: (next) ->
+    @buildPaused = false
     @runBuild @build.command, (err) =>
       if err
         return next err
@@ -55,6 +57,7 @@ class Watcher
         (next or ->) err
 
   stop: (next) =>
+    @buildPaused = true
     if @timeoutId
       clearTimeout @timeoutId
       @timeoutId = null
@@ -62,17 +65,24 @@ class Watcher
       watcher.close()
     @watchers = null
 
+  pause: ->
+    @buildPaused = true
+
+  unpause: ->
+    @buildPaused = false
+
   runBuild: (command, next) =>
-    [prog, args...] = command.split /\s+/
-    child_process.exec prog, args, (err, stdout, stderr) =>
-      if err
-        return next error "#{err}" + stderr || ''
-      if stdout
-        log stdout
-      if stderr
-        warn stderr
-      (next or ->)()
-      @doBuild = false
+    if not @buildPaused
+      [prog, args...] = command.split /\s+/
+      child_process.exec prog, args, (err, stdout, stderr) =>
+        if err
+          return next error "#{err}" + stderr || ''
+        if stdout
+          log stdout
+        if stderr
+          warn stderr
+        (next or ->)()
+        @doBuild = false
 
   runReport: =>
     changes = {}

@@ -6,6 +6,7 @@ assert          = require 'assert'
 coffee          = require 'coffee-script'
 socketIo        = require 'socket.io'
 
+createApi       = require './createApi'
 {info, note, log, warn} = require './logger'
 
 class Server
@@ -27,6 +28,20 @@ class Server
       if fileName[fileName.length - 1] == '/'
         fileName += 'index.html'
       log "#{req.method} #{fileName}"
+      req.fileName = fileName
+
+      cb = next
+      if req.url == '/config'
+        if req.method == 'GET'
+          cb = =>
+            res.send 200, @config
+
+        if req.method == 'PUT'
+          cb = => res.send @config
+
+        if cb
+          cb()
+
 
       filePath = "#{@conf.root}/#{fileName.slice 1}"
       suffix = /(\w+)$/.exec(fileName)[1]
@@ -91,7 +106,6 @@ class Server
   stop: (next) ->
     @httpServer.close =>
       @httpServer = null
-
 
   send: (data) ->
     info "Sending #{data} to client(s)"

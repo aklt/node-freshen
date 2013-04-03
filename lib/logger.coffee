@@ -20,7 +20,7 @@ msgFun = (msg, conf) ->
 
 module.exports =
   configure: (conf) ->
-    if conf.color
+    if conf and conf.color
       colorInfo  = esc + '[0;33m'
       colorNote  = esc + '[0;32m'
       colorLog   = esc + '[0;36m'
