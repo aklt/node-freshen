@@ -45,17 +45,24 @@ class Server
 
       filePath = "#{@conf.root}/#{fileName.slice 1}"
       suffix = /(\w+)$/.exec(fileName)[1]
-      fs.readFile filePath, (err, data) =>
+      fs.lstat filePath, (err, stat) =>
         if err
-          warn err + ''
-          headers['Content-Type'] = 'text/plain'
-          res.writeHead 400, headers
-          return res.end err.toString()
-        if /html?$/i.test(suffix) and @injector
-          data = @injector data
-        headers['Content-Type'] = @conf.mime[suffix] || 'text/plain'
-        res.writeHead 200, headers
-        res.end data
+          return next err
+
+        if stat.isDirectory()
+          filePath += '/index.html'
+
+        fs.readFile filePath, (err, data) =>
+          if err
+            warn err + ''
+            headers['Content-Type'] = 'text/html'
+            res.writeHead 400, headers
+            return res.end err.toString()
+          if /html?$/i.test(suffix) and @injector
+            data = @injector data
+          headers['Content-Type'] = @conf.mime[suffix] || 'text/html'
+          res.writeHead 200, headers
+          res.end data
 
     @wsServer = socketIo.listen @httpServer, {
       log: true
