@@ -1,3 +1,4 @@
+path          = require 'path'
 child_process = require 'child_process'
 watchDirs     = require './watchDirs'
 
@@ -9,7 +10,8 @@ watchDirs     = require './watchDirs'
 class Watcher
   constructor: (@conf, onChange) ->
     @delay        = @conf.delay        # At most one batch is sent per delay
-    @dir          = @conf.root or '.'  #
+    @dir          = @conf.root or path.resolve '.'
+    @dirLength    = @dir.length
     @report       = @conf.report or {} # {change: [/\.js$/, /\.css/]}
     @build        = @conf.build
     @onChange     = onChange or console.warn # Call this when a change happens
@@ -26,7 +28,7 @@ class Watcher
         return next err
       note "Watching #{@dir}"
       onEvent = (event, relativeFile) =>
-        relativeFile = relativeFile.replace /^\.\//, ''
+        relativeFile = relativeFile.slice @dirLength
         matchReport = (@report[event] or []).some (rx) ->
           rx.test relativeFile
         matchBuild = (@build.deps or []).some (rx) ->
