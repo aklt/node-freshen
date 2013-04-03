@@ -1,0 +1,18 @@
+#!/usr/bin/env coffee
+
+Client = require '../lib/Client'
+
+c1 = new Client
+
+# c1.listWorkers (err, data) ->
+#   console.log err, data
+#   process.exit 0
+#
+# c1.addWorker "#{process.env.HOME}/projects/commas", (err) ->
+#   console.warn err
+#   process.exit 0
+
+
+c1.removeWorker 21044, ->
+  console.warn 'hello'
+# #

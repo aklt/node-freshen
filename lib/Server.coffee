@@ -1,5 +1,6 @@
 fs              = require 'fs'
 url             = require 'url'
+util            = require 'util'
 path            = require 'path'
 http            = require 'http'
 assert          = require 'assert'
@@ -7,6 +8,15 @@ coffee          = require 'coffee-script'
 socketIo        = require 'socket.io'
 
 {info, note, log, warn} = require './logger'
+
+http.ServerResponse.prototype.sendJson = (code, data) ->
+  warn "sendJson #{code}, #{util.inspect data, false, 200}"
+  data = JSON.stringify data
+  this.writeHead code, {'Content-Type': 'application/json', \
+                        'Content-Length': data.length}
+  this.write data
+  this.end()
+
 
 class Server
   constructor: (@conf) ->
@@ -22,7 +32,7 @@ class Server
     headers =
       'Cache-Control': 'private, max-age=0, must-revalidate'
 
-    @httpServer = http.createServer (req, res, next) =>
+    @httpServer = http.createServer (req, res) =>
       fileName = req.url.replace /\?.*/, ''
       if fileName[fileName.length - 1] == '/'
         fileName += 'index.html'
@@ -32,7 +42,7 @@ class Server
       suffix = /(\w+)$/.exec(fileName)[1]
       fs.lstat filePath, (err, stat) =>
         if err
-          return next err
+          return res.sendJson 200, err
 
         if stat.isDirectory()
           filePath += '/index.html'
