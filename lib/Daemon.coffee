@@ -105,7 +105,7 @@ class Daemon
     cwd = dirname jsonRcfile
     ch = cp.fork "#{__dirname}/Worker.coffee", [jsonRcfile], cwd: cwd, silent: true
     warn "loadWorker " + ch
-    @rcFile = jsonRcfile
+    ch.rcFile = jsonRcfile
     ch.on 'error', (err) ->
       cb err
       cb = ->
