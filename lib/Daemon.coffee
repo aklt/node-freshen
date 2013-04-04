@@ -71,6 +71,10 @@ class Daemon
           req.on 'end', =>
             jsonRcfile = req.json and req.json.rcfile
             @loadWorker jsonRcfile, next
+
+        stop: (req, next) =>
+          @stop next
+
         restart: (req, next) =>
           next 0, todo: 'implement restart'
 
@@ -104,7 +108,7 @@ class Daemon
       return cb "Bad request"
     cwd = dirname jsonRcfile
     ch = cp.fork "#{__dirname}/Worker.coffee", [jsonRcfile], cwd: cwd, silent: true
-    warn "loadWorker " + ch
+    warn "loadWorker ", ch
     ch.rcFile = jsonRcfile
     ch.on 'error', (err) ->
       cb err
@@ -113,6 +117,17 @@ class Daemon
       console.warn 'Child exited'
     @conf.workers.push ch
     cb(0, ch)
+
+  loadWorkers: (freshenrcFiles, next) =>
+    count = freshenrcFiles.length
+    for freshenrc in freshenrcFiles
+      do (freshenrc) =>
+        @loadWorker freshenrc, (err) ->
+          if err
+            return next err
+          count -= 1
+          if count == 0
+            return next 0
 
   closeWorker: (pid, cb) ->
     for worker, i in @conf.workers
@@ -124,27 +139,23 @@ class Daemon
         return cb()
     cb "404: Could not find pid #{pid}"
 
-  loadWorkers = (freshenrcFiles, next) ->
-    count = freshenrcFiles.length
-    for freshenrc in freshenrcFiles
-      do (freshenrc) =>
-        @loadWorker freshenrc, (err) ->
+  start: (next) ->
+    @loadWorkers @conf.load, (err) =>
+      if err
+        return next err
+      @httpServer = http.createServer (req, res) =>
+        urlObject = url.parse req.url
+        @_requestMethod req, (err, result) ->
           if err
-            return next err
-          count -= 1
-          if count == 0
-            return next 0
+            return res.sendJson 404, error: err
+          res.sendJson 200, result
+      @httpServer.listen 2001, 'localhost'
 
-  start: ->
-    @httpServer = http.createServer (req, res) =>
-      urlObject = url.parse req.url
-      @_requestMethod req, (err, result) ->
-        if err
-          return res.sendJson 404, error: err
-        res.sendJson 200, result
-    @httpServer.listen 2001, 'localhost'
-
-  stop: ->
+  stop: (next) ->
+    for worker in @conf.workers
+      worker.send 'stop'
+    @httpServer.close()
+    next()
 
 
 module.exports = Daemon

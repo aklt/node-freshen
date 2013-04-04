@@ -34,27 +34,6 @@ startWorker = (freshen, configFileName) ->
   addSigIntHandler process, ->
     console.warn "CTRL-C: exit"
     process.exit 0
-  freshen.conf.readConfig configFileName, (err, conf) ->
-    freshen.logger.configure conf
-    freshen.logger.info "Running #{pkg.name} version #{pkg.version}"
-    server  = new freshen.Server conf
-    watcher = new freshen.Watcher conf, (data) ->
-      if configFileName in data.change
-        server.stop()
-        watcher.stop()
-        return start freshen, configFileName
-      server.send JSON.stringify data
-    process.on 'message', (msg) ->
-      switch msg
-        when 'stop'
-          server.stop()
-          watcher.stop()
-          process.exit 0
-        when 'start'
-          server.start()
-          watcher.start()
-    watcher.start next
-    server.start next
 
 send = (res, code, message) ->
   res.writeHead code, {'Content-Type': 'text/html', \

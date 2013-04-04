@@ -1,5 +1,6 @@
 fs     = require 'fs'
 path   = require 'path'
+util   = require 'util'
 assert = require 'assert'
 coffee = require 'coffee-script'
 
@@ -49,30 +50,48 @@ readCSON = (filename, next) ->
       return next err
     next 0, (parseCSON configData.toString()) or {}
 
+resolveFreshenrcFile = (freshenrcFile, next) ->
+  fs.lstat freshenrcFile, (err, lstat) ->
+    if err
+      return next err
+    if lstat.isDirectory()
+      return resolveFreshenrcFile "#{freshenrcFile.replace /\/$/, ''}/.freshenrc", next
+    next 0, path.resolve freshenrcFile
+
 readConfig = (configFileName, next) ->
 
   ensureConfigFilePresence = (next) ->
-    fs.exists configFileName, (exists) ->
-      if not exists
-        conf = userConf
-        return fs.exists conf, (exists) ->
-          if not exists
-            conf = defaultConf
-          log "Creating #{configFileName} from #{conf}"
-          fs.readFile conf, (err, data) ->
-            if err
-              return next err
-            fs.writeFile configFileName, data, (err) ->
+    resolveFreshenrcFile configFileName, (err, resolvedConfigFile) ->
+      if err
+        switch err.code
+          when 'ENOENT'
+            return console.warn "mkdirp #{resolvedConfigFile}"
+          else
+            return console.warn "Unhandled error #{err}"
+      fs.exists resolvedConfigFile, (exists) ->
+        # console.warn "Resolved #{resolvedConfigFile}"
+        if not exists
+          conf = userConf
+          return fs.exists conf, (exists) ->
+            if not exists
+              conf = defaultConf
+            log "Creating #{resolvedConfigFile} from #{conf}"
+            fs.readFile conf, (err, data) ->
               if err
                 return next err
-              next 0
-      next 0
+              fs.writeFile resolvedConfigFile, data, (err) ->
+                if err
+                  return next err
+                return next 0, resolvedConfigFile
+        else
+          next 0, resolvedConfigFile
 
-  ensureConfigFilePresence (err) ->
+
+  ensureConfigFilePresence (err, resolvedConfigFile) ->
     if err
       return next err
 
-    readCSON configFileName, (err, configObj) ->
+    readCSON resolvedConfigFile, (err, configObj) ->
       if err
         return next err
 
@@ -104,6 +123,8 @@ readConfig = (configFileName, next) ->
           configObj.root = realPath
           if err
             return next err
+
+          configObj.load or = []
           next 0, configObj
 
 readDaemonConfig = (daemonConfigFile, next) ->
