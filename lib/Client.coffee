@@ -56,7 +56,5 @@ class Client
 
     req.end()
 
-    next()
-
 
 module.exports = Client
