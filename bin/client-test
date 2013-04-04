@@ -12,7 +12,13 @@ for arg, i in process.argv
   if /^add|load/.test arg and process.argv[i + 1]
     return c1.addWorker process.argv[i + 2], (err, childp) ->
       console.log err
-  if /^del|^remo/.test(arg) and process.argv[i + 1]
+  if /^del|^rem/.test(arg) and process.argv[i + 1]
     console.log process.argv
     return c1.removeWorker parseInt(process.argv[i + 1], 10), (err, data) ->
       console.log err, data
+  if /^clo|^sto/.test arg
+    return c1.stop (err, data) ->
+      console.log 'closed'
+  if /^start-children/.test arg
+    return c1.restart (err, data) ->
+      console.log 'restarted', data

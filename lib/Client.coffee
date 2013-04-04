@@ -56,5 +56,17 @@ class Client
 
     req.end()
 
+  stop: (next) ->
+    options =
+      method: 'POST'
+      hostname: 'localhost'
+      port: 2001
+      path: '/stop'
+
+    req = http.request options, (res) ->
+      res.on 'readable', ->
+        warn 'READ', res.read().toString()
+
+    req.end()
 
 module.exports = Client
