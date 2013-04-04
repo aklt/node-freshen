@@ -1,0 +1,11 @@
+#!/usr/bin/env coffee
+
+Daemon = require('../lib/Daemon');
+conf = require '../lib/conf'
+
+conf.readConfig "#{process.env.HOME}/.freshenrc", (err, config) ->
+    console.warn err, config, 'OPOP'
+    d1 = new Daemon(config)
+    console.warn d1
+    d1.start()
+
