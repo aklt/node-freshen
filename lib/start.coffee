@@ -1,6 +1,10 @@
 pkg = require '../package'
 http = require 'http'
 
+Client = require '../lib/Client'
+Daemon = require '../lib/Daemon'
+conf = require '../lib/conf'
+
 next = (err) ->
   if err
     throw err
@@ -40,40 +44,34 @@ send = (res, code, message) ->
                        'Content-Length': message.length}
   res.end message
 
-startDaemon = (freshen, daemonConfigFile) ->
-  freshen.conf.readDaemonConfig daemonConfigFile, (err, conf) ->
-    if err
-      return next err
-    children = []
-    count = conf.dirs.length
-    for dir in conf.dirs
-      do (dir) ->
-        ch = require('child_process').fork "#{__dirname}/../bin/freshen", \
-          ["#{dir}/.freshenrc"], cwd: dir
-        children.push ch
-        count -= 1
-        if count == 0
-          httpServer = http.createServer (req, res, next) =>
-            parts = req.url.split /\//
-            if /^start|stop/.test parts[1]
-              for child in children
-                child.send parts[1]
-              send res, 200, parts[1]
-            else
-              send res, 502, 'nope'
-
-          httpServer.listen 5000, 'localhost'
-
 start = (freshen) ->
   startDaemon = false
   showHelp = false
-  for arg in process.argv.slice(2)
+  c1 = new Client
+  for arg, i in process.argv.slice(2)
     if /^-h|--help/.test arg
       showHelp = true
       break
     if /^start/.test arg
       startDaemon = true
       break
+    if /^list/.test arg
+      return c1.listWorkers (err, data) ->
+        console.log err, data
+        process.exit 0
+    if /^add|load/.test arg and process.argv[i]
+      return c1.addWorker process.argv[i + 2], (err, childp) ->
+        console.log err
+    if /^del|^rem/.test(arg)
+      console.log process.argv
+      return c1.removeWorker parseInt(process.argv[3], 10), (err, data) ->
+        console.log err, data
+    if /^clo|^sto/.test arg
+      return c1.stop (err, data) ->
+        console.log 'closed'
+    if /^start-children/.test arg
+      return c1.restart (err, data) ->
+        console.log 'restarted', data
 
   if showHelp
     require('util').puts """
@@ -92,10 +90,12 @@ start = (freshen) ->
     return 0
 
   if startDaemon
-    startDaemon freshen, process.env.HOME + '/.freshend'
+    conf.readConfig process.env.HOME + '/.freshenrc', (err, config) ->
+      d1 = new Daemon(config)
+      console.warn d1
+      d1.start()
+
   else
     startWorker freshen, process.argv[2] or '.freshenrc'
-
-
 
 module.exports = start
