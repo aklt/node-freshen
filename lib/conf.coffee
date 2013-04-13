@@ -93,6 +93,9 @@ readConfig = (configFileName, next) ->
           else
             configObj.root = './'
 
+        if not configObj.path
+          configObj.path = {}
+
         if not configObj.hasOwnProperty 'inject'
           configObj.inject = true
 
@@ -106,6 +109,13 @@ readConfig = (configFileName, next) ->
           configObj.root = realPath
           if err
             return next err
+
+          if not configObj.path.watch
+            configObj.path.watch = configObj.root
+
+          if not configObj.path.serve
+            configObj.path.serve = configObj.root
+
           next 0, configObj
 
 readDaemonConfig = (daemonConfigFile, next) ->

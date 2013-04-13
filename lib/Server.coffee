@@ -43,11 +43,11 @@ class Server
           cb()
 
 
-      filePath = "#{@conf.root}/#{fileName.slice 1}"
+      filePath = "#{@conf.path.serve}/#{fileName.slice 1}"
       suffix = /(\w+)$/.exec(fileName)[1]
       fs.lstat filePath, (err, stat) =>
         if err
-          return next err
+          throw err
 
         if stat.isDirectory()
           filePath += '/index.html'
