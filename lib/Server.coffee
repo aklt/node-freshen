@@ -23,10 +23,8 @@ class Server
     headers =
       'Cache-Control': 'private, max-age=0, must-revalidate'
 
-    @httpServer = http.createServer (req, res, next) =>
-      fileName = req.url.replace /\?.*/, ''
-      if fileName[fileName.length - 1] == '/'
-        fileName += 'index.html'
+    note "Serving #{@conf.path.serveFull}"
+    @httpServer = http.createServer (req, res) =>
       log "#{req.method} #{fileName}"
       req.fileName = fileName
 
@@ -43,8 +41,15 @@ class Server
           cb()
 
 
+      fileName = req.url.replace /\?.*/, ''
+      suffix = /\.(\w{2,4})$/.exec(fileName)
+      if suffix
+        suffix = suffix[1]
+      if not suffix
+        fileName = "#{fileName.replace /\/+$/, ''}/index.html"
+        suffix = 'html'
       filePath = "#{@conf.path.serve}/#{fileName.slice 1}"
-      suffix = /(\w+)$/.exec(fileName)[1]
+
       fs.lstat filePath, (err, stat) =>
         if err
           throw err

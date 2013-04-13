@@ -106,7 +106,7 @@ readConfig = (configFileName, next) ->
                                                    /^\./g, '\\.'}$"
         configObj.build.deps = srArrayToRegexArray configObj.build.deps
         fs.realpath path.normalize(configObj.root), {}, (err, realPath) ->
-          configObj.root = realPath
+          configObj.root = path.resolve realPath
           if err
             return next err
 
@@ -115,6 +115,9 @@ readConfig = (configFileName, next) ->
 
           if not configObj.path.serve
             configObj.path.serve = configObj.root
+
+          configObj.path.watchFull = path.resolve configObj.path.watch
+          configObj.path.serveFull = path.resolve configObj.path.serve
 
           next 0, configObj
 

@@ -1,4 +1,8 @@
 do ->
+
+  escapeRegExp = (str) ->
+    str.replace(/([\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|])/g, '\\$1')
+
   doc = window.document
 
   if typeof window.console == 'undefined'
@@ -104,7 +108,6 @@ do ->
 
     makeFileMatchRegexes = (stringArray) ->
       for str in stringArray
-        new RegExp "#{str.replace(/([\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|])/g, \
-                                                                '\\$1')}$"
+        new RegExp "#{escapeRegExp str}$"
 
   window.$freshen = new ServerCom '<<URL>>'

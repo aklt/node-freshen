@@ -1,7 +1,8 @@
 path          = require 'path'
 child_process = require 'child_process'
-watchDirs     = require './watchDirs'
 
+utils         = require './utils'
+watchDirs     = require './watchDirs'
 {note, log, warn, error} = require './logger'
 
 # TODO Watch recursively, report creation of dirs, interpret rename event with a
@@ -28,11 +29,17 @@ class Watcher
         return next err
       note "Watching #{@dir}"
       onEvent = (event, relativeFile) =>
+        # warn event + relativeFile
         relativeFile = relativeFile.slice @dirLength
         matchReport = (@report[event] or []).some (rx) ->
           rx.test relativeFile
         matchBuild = (@build.deps or []).some (rx) ->
           rx.test relativeFile
+
+        index = @conf.path.serve.length
+        if @conf.path.serve == '.'
+          index = 0
+        httpFile = relativeFile.slice index
 
         if matchReport or matchBuild
           if not @batchWaiting
@@ -52,7 +59,7 @@ class Watcher
 
           if matchReport
             @doReport = true
-            @reportBatch["#{event}-#{relativeFile}"] = [event, relativeFile]
+            @reportBatch["#{event} #{httpFile}"] = [event, httpFile]
 
       watchDirs @dir, @conf.exclude or /\/\/\//, onEvent, (err, watchers) =>
         @watchers = watchers
@@ -89,12 +96,19 @@ class Watcher
   runReport: =>
     changes = {}
     changeCount = 0
+    console.warn 'report', @reportBatch
     for key of @reportBatch
       changeCount += 1
       [event, relativeFile] = @reportBatch[key]
       if not changes.hasOwnProperty event
         changes[event] = []
-      changes[event].push relativeFile
+
+      index = @conf.path.watch.length
+      if @conf.path.serve == '.'
+        index = 0
+      httpFile = relativeFile.slice index
+      changes[event].push httpFile
+
     if changeCount > 0
       @onChange changes
       @reportBatch = {}
