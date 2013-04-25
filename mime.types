@@ -1,5 +1,5 @@
 application/javascript                js
-application/json                      json
+application/json                      json map
 image/gif                             gif
 image/icon                            ico
 image/jpeg                            jpeg jpg
@@ -8,5 +8,5 @@ image/svg+xml                         svg svgz
 image/tiff                            tif tiff
 text/css                              css
 text/html                             html htm shtml
-text/plain                            txt md
+text/plain                            txt md coffee
 text/xml                              xml
