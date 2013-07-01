@@ -1,5 +1,6 @@
 fs     = require 'fs'
 path   = require 'path'
+util   = require 'util'
 assert = require 'assert'
 coffee = require 'coffee-script'
 
@@ -119,6 +120,7 @@ readConfig = (configFileName, next) ->
           configObj.path.watchFull = path.resolve configObj.path.watch
           configObj.path.serveFull = path.resolve configObj.path.serve
 
+          console.warn util.inspect configObj, 0, 1
           next 0, configObj
 
 readDaemonConfig = (daemonConfigFile, next) ->
@@ -139,6 +141,8 @@ readDaemonConfig = (daemonConfigFile, next) ->
           if count == 0
             if noFreshenRc.length > 0
               return next "No .freshenrc file in:\n  #{noFreshenRc.join '\n  '}\n"
+            console.warn 'Config'
+            util.puts util.inspect confObj, 0, 1
             next 0, confObj
 
 module.exports = {readConfig, readDaemonConfig}

@@ -5,7 +5,6 @@ next = (err) ->
   if err
     throw err
 
-# {{{1 Maintain state
 state =
   sigintCount: 0
   pauseBuilds: false
@@ -13,30 +12,28 @@ state =
 addSigIntHandler = (obj, done) ->
   obj.on 'SIGINT', ->
     state.sigintCount or= 0
-    if state.sigintCount > 1
+    if state.sigintCount > 0
       done 0
     else
-      console.warn 'Press CTRL-C a couple of times to close'
+      console.warn 'Press CTRL-C again to quit'
     timeoutFun = ->
       state.sigintToken = null
       delete state.sigintCount
     state.sigintCount += 1
     if not state.sigintToken
-      state.sigintToken = setTimeout timeoutFun, 500
+      state.sigintToken = setTimeout timeoutFun, 2000
 
 addOptionsHandler = (obj, done) ->
   obj.on 'options', (options) ->
     # obj.options
 
-# 1}}}
-
 startWorker = (freshen, configFileName) ->
   addSigIntHandler process, ->
-    console.warn "CTRL-C: exit"
     process.exit 0
   freshen.conf.readConfig configFileName, (err, conf) ->
     freshen.logger.configure conf
     freshen.logger.info "Running #{pkg.name} version #{pkg.version}"
+    # console.warn conf
     server  = new freshen.Server conf
     watcher = new freshen.Watcher conf, (data) ->
       if configFileName in data.change
@@ -86,14 +83,14 @@ startDaemon = (freshen, daemonConfigFile) ->
           httpServer.listen 5000, 'localhost'
 
 start = (freshen) ->
-  startDaemon = false
+  shouldStartDaemon = false
   showHelp = false
   for arg in process.argv.slice(2)
     if /^-h|--help/.test arg
       showHelp = true
       break
     if /^start/.test arg
-      startDaemon = true
+      shouldStartDaemon = true
       break
 
   if showHelp
@@ -112,11 +109,9 @@ start = (freshen) ->
     """
     return 0
 
-  if startDaemon
+  if shouldStartDaemon
     startDaemon freshen, process.env.HOME + '/.freshend'
   else
     startWorker freshen, process.argv[2] or '.freshenrc'
-
-
 
 module.exports = start

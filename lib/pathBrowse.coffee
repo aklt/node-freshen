@@ -2,7 +2,7 @@
 fs = require 'fs'
 
 ###*
-  List a directories contents and call the passed function with
+  List directory contents and call the passed function with
   the result.  The properties of the objects are:
 
       name: file name
@@ -46,29 +46,37 @@ pathCmp = (a, b) ->
 
   return -1
 
+withRealPath = (stat, filePath, cb) ->
+  if stat.isSymbolicLink()
+    return fs.realpath filePath, cb
+  cb null, filePath
+
 pathBrowse = (filePath, cb) ->
-  fs.lstat filePath, (err, stat) =>
+  console.warn 'pathBrowse'
+  fs.stat filePath, (err, stat) =>
     if err
       return cb err
+    withRealPath stat, filePath, (err, realPath) =>
+      if err
+        return cb err
 
-    if stat.isDirectory()
-      return list filePath, (err, files) ->
-        if err
-          return cb err
+      if stat.isFile()
+        stream = fs.createReadStream realPath
+        suffix = ((/\.(\w{2,6})$/.exec realPath) or [])[1]
+        return cb 0,
+          type: suffix
+          stream: stream
 
-        cb 0,
-          data: files
-          type: 'json'
+      if stat.isDirectory()
+        return list realPath, (err, files) ->
+          if err
+            return cb err
+          cb 0,
+            data: files
+            type: 'json'
 
-    if stat.isFile()
-      stream = fs.createReadStream filePath
-      suffix = ((/\.(\w{2,6})$/.exec filePath) or [])[1]
       cb 0,
-        type: suffix
-        stream: stream
-
-    cb 0,
-      type: 'unshowable'
-      data: 'Boo'
+        type: 'unshowable'
+        data: 'Boo'
 
 module.exports = pathBrowse

@@ -24,7 +24,9 @@ class Server
       'Cache-Control': 'private, max-age=0, must-revalidate'
 
     note "Serving #{@conf.path.serveFull}"
+    note "Watching #{@conf.path.watchFull}"
     @httpServer = http.createServer (req, res) =>
+      fileName = req.url.replace /\?.*/, ''
       log "#{req.method} #{fileName}"
       req.fileName = fileName
 
@@ -41,8 +43,7 @@ class Server
           cb()
 
 
-      fileName = req.url.replace /\?.*/, ''
-      suffix = /\.(\w{2,4})$/.exec(fileName)
+      suffix = /\.(\w{2,6})$/.exec(fileName)
       if suffix
         suffix = suffix[1]
       if not suffix
@@ -52,22 +53,25 @@ class Server
 
       fs.lstat filePath, (err, stat) =>
         if err
-          throw err
+          if err.code != 'ENOENT'
+            throw err
+        else
+          try
+            if stat.isDirectory()
+              filePath += '/index.html'
+          catch e
 
-        if stat.isDirectory()
-          filePath += '/index.html'
-
-        fs.readFile filePath, (err, data) =>
-          if err
-            warn err + ''
-            headers['Content-Type'] = 'text/html'
-            res.writeHead 400, headers
-            return res.end err.toString()
-          if /html?$/i.test(suffix) and @injector
-            data = @injector data
-          headers['Content-Type'] = @conf.mime[suffix] || 'text/html'
-          res.writeHead 200, headers
-          res.end data
+          fs.readFile filePath, (err, data) =>
+            if err
+              warn err + ''
+              headers['Content-Type'] = 'text/html'
+              res.writeHead 400, headers
+              return res.end err.toString()
+            if /html?$/i.test(suffix) and @injector
+              data = @injector data
+            headers['Content-Type'] = @conf.mime[suffix] || 'text/html'
+            res.writeHead 200, headers
+            res.end data
 
     @wsServer = socketIo.listen @httpServer, {
       log: true

@@ -29,10 +29,12 @@ do ->
       @ws = io.connect url
       @ws.on 'msg', (data) =>
         json = JSON.parse data
+        console.info 'msg', json
         if json.change
           fileNames = {}
           for fileName in json.change
             suffix = /\.(\w+)$/.exec(fileName)[1].toLowerCase()
+            console.warn suffix
             if not fileNames[suffix]
               fileNames[suffix] = []
             fileNames[suffix].push fileName
@@ -91,9 +93,12 @@ do ->
       html: (htmlFiles) ->
         htmlFilesRx = makeFileMatchRegexes htmlFiles
         loc = location.href.replace /\?.*$/, ''
+        if not /\.\w{2,4}$/.test loc
+          loc = "#{loc.replace /\/+/, ''}/index.html"
         if loc[loc.length - 1] == '/'
           loc = loc + 'index.html'
         for rx in htmlFilesRx
+          console.info rx, loc
           if rx.test loc
             location.reload true
             console.log "Reloaded #{loc}"

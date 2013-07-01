@@ -8,6 +8,9 @@ watchDirs     = require './watchDirs'
 # TODO Watch recursively, report creation of dirs, interpret rename event with a
 # stat
 
+basename = (dir) ->
+    return dir.replace /^.*?\/[^\/]*$/, ''
+
 class Watcher
   constructor: (@conf, onChange) ->
     @delay        = @conf.delay        # At most one batch is sent per delay
@@ -29,17 +32,14 @@ class Watcher
         return next err
       note "Watching #{@dir}"
       onEvent = (event, relativeFile) =>
-        # warn event + relativeFile
+        warn event + relativeFile
         relativeFile = relativeFile.slice @dirLength
         matchReport = (@report[event] or []).some (rx) ->
           rx.test relativeFile
         matchBuild = (@build.deps or []).some (rx) ->
           rx.test relativeFile
 
-        index = @conf.path.serve.length
-        if @conf.path.serve == '.'
-          index = 0
-        httpFile = relativeFile.slice index
+        httpFile = relativeFile
 
         if matchReport or matchBuild
           if not @batchWaiting
@@ -61,7 +61,7 @@ class Watcher
             @doReport = true
             @reportBatch["#{event} #{httpFile}"] = [event, httpFile]
 
-      watchDirs @dir, @conf.exclude or /\/\/\//, onEvent, (err, watchers) =>
+      watchDirs "#{@conf.path.watchFull}/#{@dir.slice @conf.path.watch.length}", @conf.exclude or /\/\/\//, onEvent, (err, watchers) =>
         @watchers = watchers
         (next or ->) err
 
@@ -103,7 +103,7 @@ class Watcher
       if not changes.hasOwnProperty event
         changes[event] = []
 
-      index = @conf.path.watch.length
+      index = @conf.path.serve.length + 1
       if @conf.path.serve == '.'
         index = 0
       httpFile = relativeFile.slice index
