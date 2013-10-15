@@ -108,7 +108,7 @@ class Server
         cs = coffee.compile cs, bare: true
       js += """<script>\n#{cs}\n</script>\n"""
     return (data) ->
-      lines = data.toString().split /[\r\n]+/
+      lines = data.toString().split /\r\n|\n/g
       lastBody = -1
       for line, i in lines
         if /<\/body>/i.test line
