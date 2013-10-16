@@ -7,6 +7,11 @@ coffee          = require 'coffee-script'
 socketIo        = require 'socket.io'
 
 {loggerConf, info, note, log, warn} = require './logger'
+addHttpMethods = require './addHttpMethods'
+addHttpMethods()
+apiCommand = require './apiCommand'
+
+Api = require './Api'
 
 class Server
   constructor: (@conf) ->
@@ -24,24 +29,30 @@ class Server
     headers =
       'Cache-Control': 'private, max-age=0, must-revalidate'
 
-    @httpServer = http.createServer (req, res, next) =>
+    @httpServer = http.createServer (req, res) =>
+      res.headers = headers
+      # Control API
+      if Api.match req.url
+        return Api.handle req, res
+
+      # Serve files
       fileName = req.url.replace /\?.*/, ''
       if fileName[fileName.length - 1] == '/'
         fileName += 'index.html'
       log "#{req.method} #{fileName}"
 
       filePath = "#{@conf.root}/#{fileName.slice 1}"
-      suffix = /(\w+)$/.exec(fileName)[1]
+      suffix = /(\w*)$/.exec(fileName)[1]
       fs.readFile filePath, (err, data) =>
         if err
           warn err + ''
-          headers['Content-Type'] = 'text/plain'
-          res.writeHead 400, headers
+          res.headers['Content-Type'] = 'text/plain'
+          res.writeHead 400, res.headers
           return res.end err.toString()
         if /html?$/i.test(suffix) and @injector
           data = @injector data
-        headers['Content-Type'] = @conf.mime[suffix] || 'text/plain'
-        res.writeHead 200, headers
+        res.headers['Content-Type'] = @conf.mime[suffix] || 'text/plain'
+        res.writeHead 200, res.headers
         res.end data
 
     @wsServer = socketIo.listen @httpServer, {
@@ -93,7 +104,6 @@ class Server
   stop: (next) ->
     @httpServer.close =>
       @httpServer = null
-
 
   send: (data) ->
     info "Sending #{data} to client(s)"

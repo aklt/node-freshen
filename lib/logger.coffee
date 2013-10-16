@@ -9,12 +9,15 @@ colorWarn  = ''
 colorError = ''
 colorEnd   = ''
 
+_logBuffer = []
+
 msgFun = (msg, conf) ->
   stamp = "#{new Date().toLocaleTimeString()} "
   if conf and conf.prefix
     stamp += conf.prefix
-  return "#{msg.replace(/[\r\n]+$/, '')
-               .replace(/^/gm, conf.color)
+  msg = msg.replace /[\r\n]+$/, ''
+  _logBuffer.push [stamp, msg]
+  return "#{msg.replace(/^/gm, conf.color)
                .replace(/$/gm, colorEnd)
                .replace(/^/gm, stamp)}"
 
@@ -34,6 +37,7 @@ module.exports =
       colorWarn  = ''
       colorError = ''
       colorEnd   = ''
+  loggerBuffer: _logBuffer
   info: (msg, conf) ->
     conf or= {prefix: ''}
     conf.color = colorInfo
