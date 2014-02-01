@@ -1,33 +1,35 @@
 {
-    "name": "freshen",
-    "description": "Automatically run build scripts and refresh browsers while editing",
-    "keywords": [
-        "refresh",
-        "reload",
-        "update",
-        "browser",
-        "styling",
-        "editor",
-        "editing",
-        "utility"
-    ],
-    "version": "0.1.0",
-    "author": "Anders Thøgersen <anders@bladre.dk>",
-    "licenses": [ "GPL" ],
-    "bin": {
-        "freshen": "./bin/freshen"
-    },
-    "main": "./lib/index.js",
-    "preferGlobal": true,
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/aklt/node-freshen.git"
-    },
-    "engines": {
-        "node": ">= 0.8.0"
-    },
-    "dependencies": {
-        "coffee-script": "= 1.4.0",
-        "socket.io":     "= 0.9.13"
-    }
+  "name": "freshen",
+  "description": "Automatically run build scripts and refresh browsers while editing",
+  "keywords": [
+    "refresh",
+    "reload",
+    "update",
+    "browser",
+    "styling",
+    "editor",
+    "editing",
+    "utility"
+  ],
+  "version": "0.1.1",
+  "author": "Anders Thøgersen <anders@bladre.dk>",
+  "licenses": [
+    "GPL"
+  ],
+  "bin": {
+    "freshen": "./bin/freshen"
+  },
+  "main": "./lib/index.js",
+  "preferGlobal": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/aklt/node-freshen.git"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "dependencies": {
+    "coffee-script": "= 1.4.0",
+    "socket.io": "= 0.9.13"
+  }
 }
