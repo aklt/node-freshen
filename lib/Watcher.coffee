@@ -65,8 +65,7 @@ class Watcher
     @watchers = null
 
   runBuild: (command, next) =>
-    [prog, args...] = command.split /\s+/
-    child_process.exec prog, args, (err, stdout, stderr) =>
+    child_process.exec command, (err, stdout, stderr) =>
       if err
         return next error "#{err}" + stderr || ''
       if stdout
