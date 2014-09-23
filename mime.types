@@ -10,3 +10,4 @@ text/css                              css
 text/html                             html htm shtml
 text/plain                            txt md
 text/xml                              xml
+text/coffeescript                     coffee
