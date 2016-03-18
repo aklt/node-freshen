@@ -67,7 +67,7 @@ do ->
               remove elem
               doc.body.appendChild newElem
               console.log "Loaded #{newElem.src}"
-        return
+        return location.reload true
 
       css: (cssFiles) ->
         time = new Date().getTime()
@@ -82,7 +82,7 @@ do ->
             if rx.test href
               elem.href = "#{href}?#{time}"
               console.log "Loaded #{elem.href}"
-        return
+        return location.reload true
 
       html: (htmlFiles) ->
         htmlFilesRx = makeFileMatchRegexes htmlFiles
