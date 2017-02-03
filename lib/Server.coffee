@@ -89,7 +89,6 @@ class Server
       ].map (dir) ->
         path.normalize "#{__dirname}/#{dir}/#{socketIoPath}")
         .filter (fullPath) ->
-          console.log "Try " + fullPath
           return fs.existsSync fullPath
       if scripts.length == 0
         return (next or ->) new Error "No socket.io client"
