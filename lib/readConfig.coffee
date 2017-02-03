@@ -72,10 +72,13 @@ module.exports = readConfig = (configFileName, next) ->
         configObj.build.deps, "Config: Need build.command and build.deps"
       assert configObj.url, "Config: Need url field in config file"
 
-      readMimeTypes configObj.mimeTypesFile or defaultMime, (err, mime) ->
+      readMimeTypes configObj.mimeTypesFile or defaultMime, (err, mimeTypes) ->
         if err
           return next err
-        configObj.mime = mime
+        configObj.mimeTypes = mimeTypes
+        configObj.mimeAdd ||= {}
+        for extension of configObj.mimeAdd
+          configObj.mimeTypes[extension] = configObj.mimeAdd[extension]
         if not configObj.root
           configObj.root = './'
         if not configObj.hasOwnProperty 'inject'

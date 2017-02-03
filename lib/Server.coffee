@@ -16,11 +16,11 @@ Api = require './Api'
 class Server
   constructor: (@conf) ->
     assert @conf.url,  "Need conf.url"
-    assert @conf.mime, "Need mime types"
+    assert @conf.mimeTypes, "Need mime types"
 
     loggerConf @conf
 
-    {@url, @mime}      = @conf
+    {@url, @mimeTypes, @mimeAdd} = @conf
     {@hostname, @port} = url.parse @url
 
     @port or= '80'
@@ -51,7 +51,7 @@ class Server
           return res.end err.toString()
         if /html?$/i.test(suffix) and @injector
           data = @injector data
-        res.headers['Content-Type'] = @conf.mime[suffix] || 'text/plain'
+        res.headers['Content-Type'] = @conf.mimeTypes[suffix] || 'text/plain'
         res.writeHead 200, res.headers
         res.end data
 

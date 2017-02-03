@@ -33,3 +33,7 @@ url: 'http://localhost:5005'
 
 ## Supply a custom mimetypes file
 # mimeTypesFile: "mime.types"
+
+## Merge additional mime types that files can be served with
+# mimeAdd:
+#   php: 'text/html'
