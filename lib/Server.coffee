@@ -80,14 +80,19 @@ class Server
         msgListen = "Listening to #{url2} (changed from #{@url})"
         @url = url2
 
+      socketIoPath = 'node_modules/socket.io-client/dist/socket.io.min.js'
       scripts = ([ \
-        "../node_modules/socket.io/node_modules/socket.io-client/dist/" +
-        "socket.io.min.js",
-        "../node_modules/socket.io-client/dist/socket.io.min.js"
-      ].map (js) -> path.normalize "#{__dirname}/#{js}")
-        .filter (fullPath) -> return fs.existsSync fullPath
+        '../node_modules/socket.io',
+        '..',
+        '../..',
+        '../../..'
+      ].map (dir) ->
+        path.normalize "#{__dirname}/#{dir}/#{socketIoPath}")
+        .filter (fullPath) ->
+          console.log "Try " + fullPath
+          return fs.existsSync fullPath
       if scripts.length == 0
-        return (next or ->) "No socket.io client"
+        return (next or ->) new Error "No socket.io client"
       @injector = @makeCoffeeInjector [scripts[0],
         path.normalize "#{__dirname}/../lib/script.coffee"]
       note msgListen
