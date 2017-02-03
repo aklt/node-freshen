@@ -49,9 +49,10 @@ class Server
           res.headers['Content-Type'] = 'text/plain'
           res.writeHead 400, res.headers
           return res.end err.toString()
-        if /html?$/i.test(suffix) and @injector
+        mimeType = @conf.mimeTypes[suffix]
+        if mimeType == 'text/html'
           data = @injector data
-        res.headers['Content-Type'] = @conf.mimeTypes[suffix] || 'text/plain'
+        res.headers['Content-Type'] = mimeType || 'text/plain'
         res.writeHead 200, res.headers
         res.end data
 
@@ -79,17 +80,16 @@ class Server
         msgListen = "Listening to #{url2} (changed from #{@url})"
         @url = url2
 
-      if @conf.inject
-        scripts = ([ \
-          "../node_modules/socket.io/node_modules/socket.io-client/dist/" +
-          "socket.io.min.js",
-          "../node_modules/socket.io-client/dist/socket.io.min.js"
-        ].map (js) -> path.normalize "#{__dirname}/#{js}")
-          .filter (fullPath) -> return fs.existsSync fullPath
-        if scripts.length == 0
-          return (next or ->) "No socket.io client"
-        @injector = @makeCoffeeInjector [scripts[0],
-          path.normalize "#{__dirname}/../lib/script.coffee"]
+      scripts = ([ \
+        "../node_modules/socket.io/node_modules/socket.io-client/dist/" +
+        "socket.io.min.js",
+        "../node_modules/socket.io-client/dist/socket.io.min.js"
+      ].map (js) -> path.normalize "#{__dirname}/#{js}")
+        .filter (fullPath) -> return fs.existsSync fullPath
+      if scripts.length == 0
+        return (next or ->) "No socket.io client"
+      @injector = @makeCoffeeInjector [scripts[0],
+        path.normalize "#{__dirname}/../lib/script.coffee"]
       note msgListen
       (next or ->) 0
 

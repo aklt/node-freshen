@@ -81,8 +81,6 @@ module.exports = readConfig = (configFileName, next) ->
           configObj.mimeTypes[extension] = configObj.mimeAdd[extension]
         if not configObj.root
           configObj.root = './'
-        if not configObj.hasOwnProperty 'inject'
-          configObj.inject = true
         for event of configObj.report
           configObj.report[event] = srArrayToRegexArray configObj.report[event]
         configObj.report.change.push new RegExp "#{configFileName.replace \
