@@ -80,10 +80,16 @@ class Server
         @url = url2
 
       if @conf.inject
-        @injector = @makeCoffeeInjector \
-        (["../node_modules/socket.io/node_modules/socket.io-client/dist/" + \
-          "socket.io.min.js", "script.coffee"] \
-            .map (js) -> path.normalize("#{__dirname}/#{js}"))
+        scripts = ([ \
+          "../node_modules/socket.io/node_modules/socket.io-client/dist/" +
+          "socket.io.min.js",
+          "../node_modules/socket.io-client/dist/socket.io.min.js"
+        ].map (js) -> path.normalize "#{__dirname}/#{js}")
+          .filter (fullPath) -> return fs.existsSync fullPath
+        if scripts.length == 0
+          return (next or ->) "No socket.io client"
+        @injector = @makeCoffeeInjector [scripts[0],
+          path.normalize "#{__dirname}/../lib/script.coffee"]
       note msgListen
       (next or ->) 0
 
