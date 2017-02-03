@@ -31,6 +31,10 @@ build:
 # Where to access server
 url: 'http://localhost:5005'
 
+## Proxy a request to a specific URL to a different application
+# proxyUrls:
+#  '/api(.*)$': 'http://localhost:5006/${1}'
+
 ## Supply a custom mimetypes file
 # mimeTypesFile: "mime.types"
 
