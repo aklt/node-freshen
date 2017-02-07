@@ -89,7 +89,7 @@ class Watcher
       @reportBatch = {}
     @doReport = false
     @batchWaiting = false
-    info '___________________________________________'
+    log '___________________________________________'
 
 module.exports = Watcher
 
