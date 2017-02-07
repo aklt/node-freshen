@@ -39,7 +39,7 @@ class Server
       fileName = req.url.replace /\?.*/, ''
       if fileName[fileName.length - 1] == '/'
         fileName += 'index.html'
-      log "#{req.method} #{fileName}"
+      note "#{req.method} #{fileName}"
 
       filePath = "#{@conf.root}/#{fileName.slice 1}"
       suffix = /(\w*)$/.exec(fileName)[1]
@@ -94,7 +94,7 @@ class Server
         return (next or ->) new Error "No socket.io client"
       @injector = @makeCoffeeInjector [scripts[0],
         path.normalize "#{__dirname}/../lib/script.coffee"]
-      note msgListen
+      info msgListen
       (next or ->) 0
 
     @httpServer.removeAllListeners 'error'

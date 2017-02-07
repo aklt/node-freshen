@@ -1,7 +1,7 @@
 child_process = require 'child_process'
 watchDirs     = require './watchDirs'
 
-{loggerConf, note, log, warn, error} = require './logger'
+{loggerConf, info, note, log, warn, error} = require './logger'
 
 # TODO Watch recursively, report creation of dirs, interpret rename event with a
 # stat
@@ -24,7 +24,7 @@ class Watcher
     @runBuild @build.command, (err) =>
       if err
         return next err
-      note "Watching #{@dir}"
+      info "Watching #{@dir}"
       onEvent = (event, relativeFile) =>
         relativeFile = relativeFile.replace /^\.\//, ''
         matchReport = (@report[event] or []).some (rx) ->
@@ -89,7 +89,7 @@ class Watcher
       @reportBatch = {}
     @doReport = false
     @batchWaiting = false
-    note '___________________________________________'
+    info '___________________________________________'
 
 module.exports = Watcher
 
