@@ -22,9 +22,11 @@ do ->
 
   class ServerCom
     constructor: (url) ->
-      @ws = io.connect url
-      @ws.on 'msg', (data) =>
-        json = JSON.parse data
+      @ws = new WebSocket url
+      @ws.onconnect = () =>
+        console.log 'Connect'
+      @ws.onmessage = (ev) =>
+        json = JSON.parse ev.data
         if json.change
           fileNames = {}
           for fileName in json.change

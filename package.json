@@ -11,7 +11,7 @@
     "editing",
     "utility"
   ],
-  "version": "0.2.0",
+  "version": "0.2.0-dev",
   "author": "Anders Thøgersen <anders@bladre.dk>",
   "licenses": [
     "GPL"
@@ -30,6 +30,6 @@
   },
   "dependencies": {
     "coffee-script": "= 1.4.0",
-    "socket.io": "= 0.9.13"
+    "ws": "^2.0.2"
   }
 }

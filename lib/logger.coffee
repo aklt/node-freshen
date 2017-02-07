@@ -1,6 +1,4 @@
 
-puts = require('util').puts
-
 esc = String.fromCharCode 27
 colorInfo  = ''
 colorLog   = ''
@@ -8,6 +6,7 @@ colorNote  = ''
 colorWarn  = ''
 colorError = ''
 colorEnd   = ''
+log = console.log
 
 _logBuffer = []
 
@@ -41,23 +40,23 @@ module.exports =
   info: (msg, conf) ->
     conf or= {prefix: ''}
     conf.color = colorInfo
-    puts msgFun msg, conf
+    log msgFun msg, conf
   note: (msg, conf) ->
     conf or= {prefix: ''}
     conf.color = colorNote
-    puts msgFun msg, conf
+    log msgFun msg, conf
   log: (msg, conf) ->
     conf or= {prefix: ''}
     conf.color = colorLog
-    puts msgFun msg, conf
+    log msgFun msg, conf
   warn: (msg, conf) ->
     conf or= {prefix: ''}
     conf.color = colorWarn
     conf.prefix = "WARNING #{conf.prefix}"
-    puts msgFun msg, conf
+    log msgFun msg, conf
   error: (msg, conf) ->
     conf or= {prefix: ''}
     conf.color = colorError
     conf.prefix = "ERROR #{conf.prefix}"
-    puts msgFun msg, conf
+    log msgFun msg, conf
 

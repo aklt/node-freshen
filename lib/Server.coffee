@@ -4,7 +4,7 @@ path            = require 'path'
 http            = require 'http'
 assert          = require 'assert'
 coffee          = require 'coffee-script'
-socketIo        = require 'socket.io'
+WebSocket       = require 'ws'
 
 {loggerConf, info, note, log, warn} = require './logger'
 addHttpMethods = require './addHttpMethods'
@@ -39,7 +39,7 @@ class Server
       fileName = req.url.replace /\?.*/, ''
       if fileName[fileName.length - 1] == '/'
         fileName += 'index.html'
-      log "#{req.method} #{fileName}"
+      note "#{req.method} #{fileName}"
 
       filePath = "#{@conf.root}/#{fileName.slice 1}"
       suffix = /(\w*)$/.exec(fileName)[1]
@@ -56,13 +56,12 @@ class Server
         res.writeHead 200, res.headers
         res.end data
 
-    @wsServer = socketIo.listen @httpServer, {
-      log: true
-      'log level': 1
-      transports: ['websocket', 'xhr-polling', 'htmlfile']
+    @wsServer = new WebSocket.Server {
+      server: @httpServer
+      path: '/'
     }
 
-    @wsServer.on 'connection', (socket) ->
+    @wsServer.on 'connection', (ws) ->
       log "Connection accepted"
 
   start: (next) ->
@@ -80,21 +79,9 @@ class Server
         msgListen = "Listening to #{url2} (changed from #{@url})"
         @url = url2
 
-      socketIoPath = 'node_modules/socket.io-client/dist/socket.io.min.js'
-      scripts = ([ \
-        '../node_modules/socket.io',
-        '..',
-        '../..',
-        '../../..'
-      ].map (dir) ->
-        path.normalize "#{__dirname}/#{dir}/#{socketIoPath}")
-        .filter (fullPath) ->
-          return fs.existsSync fullPath
-      if scripts.length == 0
-        return (next or ->) new Error "No socket.io client"
-      @injector = @makeCoffeeInjector [scripts[0],
-        path.normalize "#{__dirname}/../lib/script.coffee"]
-      note msgListen
+      @injector = @makeCoffeeInjector \
+          [path.normalize "#{__dirname}/../lib/script.coffee"]
+      info msgListen
       (next or ->) 0
 
     @httpServer.removeAllListeners 'error'
@@ -117,13 +104,16 @@ class Server
 
   send: (data) ->
     info "Sending #{data} to client(s)"
-    @wsServer.sockets.emit 'msg', data
+    @wsServer.clients.forEach (client) ->
+      if client.readyState == WebSocket.OPEN
+        client.send data
 
   makeCoffeeInjector: (filesToInject) ->
     js = ''
     for fileToInject in filesToInject
-      # info "Reading #{fileToInject}"
-      cs = fs.readFileSync(fileToInject).toString().replace '<<URL>>', @url
+      # XXX ws protocol hack
+      cs = fs.readFileSync(fileToInject).toString().replace \
+          '<<URL>>', @url.replace /^http/, 'ws'
       if /\.coffee$/.test fileToInject
         cs = coffee.compile cs, bare: true
       js += """<script>\n#{cs}\n</script>\n"""
