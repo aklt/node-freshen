@@ -31,9 +31,20 @@ build:
 # Where to access server
 url: 'http://localhost:5005'
 
+## The whole page is loaded on file.
+## Set the following to true to attempt to hot load only the changed resource
+# load:
+#   js: true
+#   css: true
+#   png: true
+
 ## Supply a custom mimetypes file
 # mimeTypesFile: "mime.types"
 
 ## Merge additional mime types that files can be served with
 # mimeAdd:
 #   php: 'text/html'
+#
+
+## Help debugging
+# debug: true
