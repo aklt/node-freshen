@@ -2,14 +2,6 @@
 #
 # Place a file like this in the root of the directory you wish freshen to serve
 
-# Send at most 1 message to browsers in this amount of milliseconds
-# This is useful to avoid sending a lot of seperate requests to load
-# files to browsers when the build process changes many files
-delay: 150
-
-# Should terminal logging be in color?
-color: true
-
 # All directories below the directory that freshen is started in will be
 # watched. Use this option to set a regular expression matching directories that
 # should not be watched.  Note that the root dir will always be included.
@@ -31,20 +23,33 @@ build:
 # Where to access server
 url: 'http://localhost:5005'
 
-## The whole page is loaded on file.
-## Set the following to true to attempt to hot load only the changed resource
+# Defaulted config values that can be overridden
+################################################
+
+# # Send at most 1 message to browsers in this amount of milliseconds This is
+# # useful to avoid sending a lot of seperate requests to load files to browsers
+# # when the build process changes many files
+# delay: 150
+
+# # Should terminal logging be in color?
+# color: true
+
+# # The whole page is loaded when change is reported. Set the following to true
+# # to attempt to hot load only the changed resource
 # load:
 #   js: true
 #   css: true
 #   png: true
 
-## Supply a custom mimetypes file
+# # Supply a custom mimetypes file
 # mimeTypesFile: "mime.types"
 
-## Merge additional mime types that files can be served with
+# # Merge additional mime types that files can be served with
 # mimeAdd:
 #   php: 'text/html'
-#
 
-## Help debugging
+# # How many retries the client attempts before giving up
+# retries: 20
+
+# # Help debugging
 # debug: true
