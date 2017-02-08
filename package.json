@@ -2,16 +2,14 @@
   "name": "freshen",
   "description": "Automatically run build scripts and refresh browsers while editing",
   "keywords": [
+    "build",
+    "inotify",
     "refresh",
     "reload",
     "update",
-    "browser",
-    "styling",
-    "editor",
-    "editing",
     "utility"
   ],
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": "Anders Thøgersen <anders@bladre.dk>",
   "licenses": [
     "GPL"
