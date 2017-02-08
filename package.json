@@ -29,6 +29,7 @@
     "node": ">= 0.8.0"
   },
   "dependencies": {
+    "ReconnectingWebSocket": "git+https://github.com/joewalnes/reconnecting-websocket.git#fd7c819bb15eeee",
     "ws": "^2.0.2"
   }
 }
