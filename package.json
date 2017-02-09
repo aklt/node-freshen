@@ -17,6 +17,9 @@
   "bin": {
     "freshen": "./bin/freshen"
   },
+  "scripts": {
+    "test": "mocha"
+  },
   "main": "./lib/index.js",
   "preferGlobal": true,
   "repository": {
