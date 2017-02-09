@@ -1,0 +1,8 @@
+report:
+  change: 'html'
+
+build:
+  command: 'make'
+  deps: 'txt'
+
+url: 'http://localhost:1025'

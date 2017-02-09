@@ -21,7 +21,19 @@ build:
   deps: 'less md html'
 
 # Where to access server
-url: 'http://localhost:5005'
+url: 'http://localhost:1024'
+
+# http proxy - note that this requires http-proxy to be installed so that
+# freshen can require it
+############
+proxy:
+  # If a request matches this url
+  from:  '^/api/(.*)$'
+  # rewite it to this url and send it returning the result
+  to:    'http://localhost:8080/${1}'
+  # retry this amount of times before bailing
+  retry: 20
+
 
 # Defaulted config values that can be overridden
 ################################################

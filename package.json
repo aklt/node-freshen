@@ -29,5 +29,9 @@
   "dependencies": {
     "ReconnectingWebSocket": "git+https://github.com/joewalnes/reconnecting-websocket.git#fd7c819bb15eeee",
     "ws": "=2.0.2"
+  },
+  "devDependencies": {
+    "unexpected": "^10.25.0",
+    "mocha": "^3.2.0"
   }
 }

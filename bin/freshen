@@ -1,4 +1,22 @@
 #!/usr/bin/env node
 
-var freshen = require('../lib/index');
-freshen.start(freshen, '.freshenrc');
+var freshen = require('../lib/index')
+
+var args = process.argv.slice(2)
+var rcFile = '.freshenrc'
+
+;(function () {
+  for (var i = 0; i < args.length; i++) {
+    switch (args[i]) {
+      case '-h':
+      case '--help':
+        return console.log('Usage: freshen [configfile]')
+      case '-v':
+      case '--version':
+        return console.log(require('../package').version)
+      default:
+        rcFile = args[i]
+    }
+  }
+  freshen.start(freshen, rcFile)
+}())
