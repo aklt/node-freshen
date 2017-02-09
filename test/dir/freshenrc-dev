@@ -1,0 +1,13 @@
+report:
+  change: 'html'
+
+build:
+  command: 'make'
+  deps: 'txt'
+
+url: 'http://localhost:1024'
+
+proxy:
+  from:  '^/api/(.*)$'
+  to:    'http://localhost:1025/$1'
+  retry: 20
