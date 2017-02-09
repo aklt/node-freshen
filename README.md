@@ -1,3 +1,5 @@
+
+[![Build Status](https://travis-ci.org/aklt/node-freshen.svg?branch=master)](https://travis-ci.org/aklt/node-freshen)
 # Freshen - Update browser(s) while editing
 
 This program monitors files for changes, runs build scripts and tells browsers

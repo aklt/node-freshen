@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - 6
+env:
+  - WAIT_FOR_FRESHEN=2000
+before_script:
+  - npm install http-proxy
+script:
+  - mocha --timeout 4000
