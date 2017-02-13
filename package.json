@@ -34,7 +34,8 @@
     "ws": "=2.0.2"
   },
   "devDependencies": {
-    "unexpected": "^10.25.0",
-    "mocha": "^3.2.0"
+    "http-proxy": "^1.16.2",
+    "mocha": "^3.2.0",
+    "unexpected": "^10.25.0"
   }
 }
