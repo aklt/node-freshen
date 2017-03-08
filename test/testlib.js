@@ -2,8 +2,10 @@
 var childProcess = require('child_process')
 
 var m = module.exports = {}
+var slice = [].slice
 
-m.start = (...args) => {
+m.start = function (/* ...args */) {
+  var args = slice.call(arguments)
   var cb = args.pop()
   var i = -1
   ;(function loop (err) {
@@ -19,7 +21,8 @@ m.start = (...args) => {
   }(0))
 }
 
-m.stop = (...args) => {
+m.stop = function (/* ...args */) {
+  var args = slice.call(arguments)
   var cb = args.pop()
   var i = -1
   ;(function loop (err) {
@@ -34,7 +37,8 @@ m.stop = (...args) => {
   }(0))
 }
 
-m.sh = (...args) => {
+m.sh = function (/* ...args */) {
+  var args = slice.call(arguments)
   var cb = args.pop()
   childProcess.exec(args.join(' '), (err, stdout, stderr) => {
     if (err) return cb(err)

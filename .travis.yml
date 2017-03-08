@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - 6
+  - 4
 env:
   - WAIT_FOR_FRESHEN=2000
 before_script:
