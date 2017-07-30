@@ -1,14 +1,13 @@
-
 var childProcess = require('child_process')
 
-var m = module.exports = {}
+var m = (module.exports = {})
 var slice = [].slice
 
-m.start = function (/* ...args */) {
+m.start = function(/* ...args */) {
   var args = slice.call(arguments)
   var cb = args.pop()
   var i = -1
-  ;(function loop (err) {
+  ;(function loop(err) {
     if (err) return cb(err)
     i++
     if (args[i]) {
@@ -18,14 +17,14 @@ m.start = function (/* ...args */) {
       // hack wait for the freshen processes to actually start
       setTimeout(cb, process.env.WAIT_FOR_FRESHEN || 300)
     }
-  }(0))
+  })(0)
 }
 
-m.stop = function (/* ...args */) {
+m.stop = function(/* ...args */) {
   var args = slice.call(arguments)
   var cb = args.pop()
   var i = -1
-  ;(function loop (err) {
+  ;(function loop(err) {
     if (err) return cb(err)
     i++
     if (args[i]) {
@@ -34,10 +33,10 @@ m.stop = function (/* ...args */) {
     } else {
       cb()
     }
-  }(0))
+  })(0)
 }
 
-m.sh = function (/* ...args */) {
+m.sh = function(/* ...args */) {
   var args = slice.call(arguments)
   var cb = args.pop()
   childProcess.exec(args.join(' '), (err, stdout, stderr) => {
