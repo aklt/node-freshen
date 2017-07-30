@@ -1,19 +1,10 @@
 {
   "name": "freshen",
   "description": "Automatically run build scripts and refresh browsers while editing",
-  "keywords": [
-    "build",
-    "inotify",
-    "refresh",
-    "reload",
-    "update",
-    "utility"
-  ],
-  "version": "0.5.1-dev",
+  "keywords": ["build", "inotify", "refresh", "reload", "update", "utility"],
+  "version": "0.6.1",
   "author": "Anders Thøgersen <anders@bladre.dk>",
-  "licenses": [
-    "GPL-2.0"
-  ],
+  "licenses": ["GPL-2.0"],
   "bin": {
     "freshen": "./bin/freshen"
   },
@@ -34,7 +25,8 @@
     "ws": "=2.0.2"
   },
   "devDependencies": {
-    "unexpected": "^10.25.0",
-    "mocha": "^3.2.0"
+    "http-proxy": "^1.16.2",
+    "mocha": "^3.2.0",
+    "unexpected": "^10.25.0"
   }
 }
