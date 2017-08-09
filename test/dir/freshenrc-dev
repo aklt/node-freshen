@@ -5,7 +5,7 @@ build:
   command: 'make'
   deps: 'txt'
 
-url: 'http://localhost:1024'
+port: 1024
 
 proxy:
   from:  '^/api/(.*)$'

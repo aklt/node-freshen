@@ -20,8 +20,8 @@ build:
   command: 'make'
   deps: 'less md html'
 
-# Where to access server
-url: 'http://localhost:1024'
+# Port to access server at
+port: 1024
 
 # # http proxy - note that this requires http-proxy to be installed so that
 # # freshen can require it
