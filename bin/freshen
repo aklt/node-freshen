@@ -8,14 +8,14 @@ var rcFile = '.freshenrc'
 ;(function () {
   for (var i = 0; i < args.length; i++) {
     switch (args[i]) {
-      case '-h':
-      case '--help':
-        return console.log('Usage: freshen [configfile]')
-      case '-v':
-      case '--version':
-        return console.log(require('../package').version)
-      default:
-        rcFile = args[i]
+    case '-h':
+    case '--help':
+      return console.log('Usage: freshen [configfile]')
+    case '-v':
+    case '--version':
+      return console.log(require('../package').version)
+    default:
+      rcFile = args[i]
     }
   }
   freshen.start(freshen, rcFile)
