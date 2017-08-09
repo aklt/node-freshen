@@ -19,8 +19,22 @@ running the following commands:
     $ npm install -g freshen
     $ cd location/of/my/static/site
     $ freshen
-    [2012-10-24T22:34:05] Creating .freshenrc from /some/path/node-freshen/freshenrc-example
-    [2012-10-24T22:34:05] Listening to http://localhost:5005
+    11:05:34 PM Creating .freshenrc from /home/me/src/freshen/freshenrc-example
+    11:05:34 PM Running freshen version 0.6.4-dev
+    11:05:34 PM Listening to http://myhost:1024
+    11:05:34 PM lessc style.less > style.css
+    11:05:34 PM cat header.html  > index.html
+    11:05:34 PM markdown index.md     >> index.html
+    11:05:34 PM cat footer.html >> index.html
+    11:05:34 PM cat header.html  > en/foo.html
+    11:05:34 PM markdown en/foo.md     >> en/foo.html
+    11:05:34 PM cat footer.html >> en/foo.html
+    11:05:34 PM Watching /home/me/src/freshen/example
+    11:05:35 PM Connection from Mozilla/5.0 (X11; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0
+    11:05:38 PM Connection from Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36
+    11:05:55 PM GET /index.html
+    11:05:55 PM GET /style.css
+    11:05:55 PM GET /test.js
 ```
 
 Point your browser at `http://localhost:5005` and start editing the files that
@@ -57,26 +71,25 @@ build:
   command: 'make'
   deps: 'less md html'
 
-# Where to access server
-url: 'http://localhost:1024'
+# Port to access server at
+port: 1024
 
-# http proxy - note that this requires http-proxy to be installed so that
-# freshen can require it
-############
-proxy:
-  # If a request matches this url
-  from:  '^/api/(.*)$'
-  # rewrite it to this url and send it returning the result
-  to:    'http://localhost:8080/${1}'
-  # retry this amount of times before bailing
-  retry: 20
-
+# # http proxy - note that this requires http-proxy to be installed so that
+# # freshen can require it
+# ############
+# proxy:
+#   # If a request matches this url
+#   from:  '^/api/(.*)$'
+#   # rewite it to this url and send it returning the result
+#   to:    'http://localhost:8080/${1}'
+#   # retry this amount of times before bailing
+#   retry: 20
 
 # Defaulted config values that can be overridden
 ################################################
 
 # # Send at most 1 message to browsers in this amount of milliseconds This is
-# # useful to avoid sending a lot of separate requests to load files to browsers
+# # useful to avoid sending a lot of seperate requests to load files to browsers
 # # when the build process changes many files
 # delay: 150
 
