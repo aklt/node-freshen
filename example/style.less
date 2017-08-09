@@ -1,27 +1,28 @@
 @marg: 1.2em;
-@col1: #ABB;
+@col1: #abb;
 @col2: #542;
-@col3: #DEE;
+@col3: #dee;
 
 body {
-    margin: @marg;
-    padding: .2em;
-    border-top: 10px solid yellow;
+  margin: @marg;
+  padding: 0.2em;
+  border-top: 10px solid yellow;
 }
 
 div.content {
-    padding: @marg;
-    background-color: @col1;
+  padding: @marg;
+  background-color: @col1;
 }
 
 p {
-    color: @col2;
-    .foo {
-        background-color: cyan;
-    }
+  color: @col2;
+
+  .foo {
+    background-color: cyan;
+  }
 }
 
 span.s1 {
-    text-decoration: underline;
-    color: @col3;
+  text-decoration: underline;
+  color: @col3;
 }
