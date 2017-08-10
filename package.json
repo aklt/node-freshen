@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "ReconnectingWebSocket": "git+https://github.com/joewalnes/reconnecting-websocket.git#fd7c819bb15eeee",
-    "ws": "=2.0.2"
+    "ws": "^3.1.0"
   },
   "devDependencies": {
     "http-proxy": "^1.16.2",
