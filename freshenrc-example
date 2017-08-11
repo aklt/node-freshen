@@ -4,18 +4,21 @@
 
 # All directories below the directory that freshen is started in will be
 # watched. Use this option to set a regular expression matching directories that
-# should not be watched.  Note that the root dir will always be included.
-# exclude: /__foo/
+# should not be watched.  The root dir will always be included.
+# This may be an array of RegExps or a string of space separated regular
+# expressions.
+exclude: './.git ./node_modules'
 
-# Files to reload in the browser when they change. The value of `change` should
-# be either a string of suffix names separated by whitespace or an array of
-# regular expressions.
+# Files to reload in the browser when they change. The value of `change`
+# may be an array of RegExps or a string of regular expressions.  If this is a
+# string the end of line assertion '$' will be added to each
 report:
   change: 'css html js'
 
 # Run command each time a file matching one of the suffixes or regular
 # expressions in deps changes.
-# The value of `deps` can be a string of suffix names or an Array of RegExps
+# The value of `deps` may be an Array of RegExps or a string similar to
+# report.change above
 build:
   command: 'make'
   deps: 'less md html'
