@@ -4,7 +4,7 @@ var expect = require('unexpected')
 
 describe('readConfig', () => {
   it('reads properties with parseNasted', done => {
-    freshen.readConfig(`${__dirname}/freshenrc-dev`, {}, function(
+    freshen.readConfig(`${__dirname}/dir/freshenrc-dev`, {}, function(
       err,
       conf,
       created
