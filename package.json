@@ -1,10 +1,19 @@
 {
   "name": "freshen",
   "description": "Automatically run build scripts and refresh browsers while editing",
-  "keywords": ["build", "inotify", "refresh", "reload", "update", "utility"],
-  "version": "0.6.4-dev",
+  "keywords": [
+    "build",
+    "inotify",
+    "refresh",
+    "reload",
+    "update",
+    "utility"
+  ],
+  "version": "0.7.0-dev",
   "author": "Anders Thøgersen <anders@bladre.dk>",
-  "licenses": ["GPL-2.0"],
+  "licenses": [
+    "GPL-2.0"
+  ],
   "bin": {
     "freshen": "./bin/freshen"
   },
@@ -22,7 +31,7 @@
   },
   "dependencies": {
     "ReconnectingWebSocket": "git+https://github.com/joewalnes/reconnecting-websocket.git#fd7c819bb15eeee",
-    "ws": "=2.0.2"
+    "ws": "^3.1.0"
   },
   "devDependencies": {
     "http-proxy": "^1.16.2",
