@@ -15,7 +15,7 @@ m.start = function(/* ...args */) {
       loop()
     } else {
       // hack wait for the freshen processes to actually start
-      setTimeout(cb, process.env.WAIT_FOR_FRESHEN || 300)
+      setTimeout(cb, process.env.WAIT_FOR_FRESHEN || 600)
     }
   })(0)
 }
